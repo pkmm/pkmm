@@ -59,7 +59,7 @@ var getForums = toolbox.NewTask("getForums", "0 30 23,18 * * *", func() error {
 	return nil
 })
 
-var signForums = toolbox.NewTask("sign", "0 0 0,12 * * *", func() error {
+var signForums = toolbox.NewTask("sign", "0 0 0,12,11 * * *", func() error {
 
 	users, total, err := models.GetAllUsers()
 	if total == 0 {
