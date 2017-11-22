@@ -79,8 +79,11 @@ var signForums = toolbox.NewTask("sign", "0 0 0,12,11 * * *", func() error {
 			ret := w.SignAll(&forumList)
 			for kw, reply := range *ret {
 				fmt.Println(kw)
-				orm.NewOrm().QueryTable(models.TableName("forums")).Filter("user_id", user.Id).
-					Filter("kw", kw).Update(orm.Params{"reply_json": reply, "last_sign": time.Now().Day()})
+				orm.NewOrm().QueryTable(models.TableName("forums")).
+					Filter("user_id", user.Id).
+						Filter("kw", kw).
+							Exclude("last_sign", time.Now().Day()).
+								Update(orm.Params{"reply_json": reply, "last_sign": time.Now().Day()})
 			}
 		}(user)
 	}
