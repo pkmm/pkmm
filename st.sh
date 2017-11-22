@@ -1,4 +1,7 @@
-#!/bin/sh
+
+git pull 
+source /etc/profile 
+go build
 
 case $1 in
 	start)
