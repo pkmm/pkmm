@@ -2,12 +2,16 @@
 
 #停止应用
 killall pkmm
+echo "关闭了进程 pkmm"
 #更新
 git pull
+echo "更新代码"
 
 #编译
 source /etc/profile
 go build
+echo "编译"
 
 #启动
 nohup ./pkmm 2>&1 >> info.log 2>&1 /dev/null &
+echo "启动了"
