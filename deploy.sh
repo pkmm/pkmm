@@ -8,10 +8,11 @@ git pull
 echo "更新代码"
 
 #编译
+echo "现在开始编译啦~~"
 source /etc/profile
 go build
-echo "编译"
+echo "编译完成~~"
 
 #启动
 nohup ./pkmm 2>&1 >> info.log 2>&1 /dev/null &
-echo "启动了"
+echo "已经启动了"
