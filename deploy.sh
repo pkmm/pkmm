@@ -15,4 +15,4 @@ echo "编译完成~~"
 
 #启动
 nohup ./pkmm 2>&1 >> info.log 2>&1 /dev/null &
-echo "已经启动了~~"
+echo "已经启动了！"
