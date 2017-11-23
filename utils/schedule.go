@@ -12,7 +12,7 @@ import (
 
 // 初始化函数
 func init() {
-	toolbox.AddTask("getForums", getForums)
+	toolbox.AddTask("syncUsersForumsFromOfficial", syncUsersForumsFromOfficial)
 	toolbox.AddTask("sign", signForums)
 }
 
@@ -21,7 +21,7 @@ type ChannelData struct {
 	Fid string
 }
 
-var getForums = toolbox.NewTask("getForums", "0 30 23,18 * * *", func() error {
+var syncUsersForumsFromOfficial = toolbox.NewTask("syncUsersForumsFromOfficial", "0 30 23,18 * * *", func() error {
 	//fmt.Println("begin get Userlist")
 	users, total, err := models.GetAllUsers()
 	if err != nil {

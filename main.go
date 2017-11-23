@@ -12,7 +12,7 @@ func main() {
 
 	models.Init()
 
-	beego.Router("/test", &controllers.ForumController{}, "*:GetForums")
+	beego.Router("/", &controllers.ForumController{}, "*:GetForums")
 
 	beego.Run()
 }

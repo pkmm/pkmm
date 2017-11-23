@@ -12,7 +12,7 @@ type ForumController struct {
 
 func (this *ForumController) GetForums() {
 
-	userId, _ := this.GetInt("userId")
+	userId, _ := this.GetInt("userId", 1)
 	forums, total := models.GetForumsByUserId(userId)
 	out := make(map[string]interface{})
 	out["total"] = total
