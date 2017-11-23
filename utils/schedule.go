@@ -16,6 +16,7 @@ func init() {
 	toolbox.AddTask("sign", signForums)
 }
 
+// goroutine 通信数据机构
 type ChannelData struct {
 	Kw  string
 	Fid string
