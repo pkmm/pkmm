@@ -83,7 +83,7 @@ var signForums = toolbox.NewTask("sign", "0 0 0,12,11 * * *", func() error {
 				orm.NewOrm().QueryTable(models.TableName("forums")).
 					Filter("user_id", user.Id).
 						Filter("kw", kw).
-							Exclude("last_sign", time.Now().Day()).
+							Exclude("last_sign", time.Now().Day()).Exclude("fid", -1).
 								Update(orm.Params{"reply_json": reply, "last_sign": time.Now().Day()})
 			}
 		}(user)
