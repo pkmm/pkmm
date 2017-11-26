@@ -25,7 +25,11 @@ func (t *Forum) TableName() string {
 
 func GetForumsByUserId(userId int) ([]*Forum, int64) {
 	forums := make([]*Forum, 0)
-	total, err := orm.NewOrm().QueryTable(TableName("forums")).Filter("user_id", userId).All(&forums)
+	total, err := orm.NewOrm().QueryTable(TableName("forums")).
+		Filter("user_id", userId).
+		Exclude("fid", -1).
+		Exclude("last_sign", time.Now().Day()).
+		All(&forums)
 	if err != nil {
 		return nil, 0
 	}
