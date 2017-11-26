@@ -70,7 +70,7 @@ var signForums = toolbox.NewTask("sign", "0 0 0,12,11 * * *", func() error {
 	}
 	for _, user := range users {
 		go func(user *models.User) {
-			forums, _ := models.GetForumsByUserId(user.Id)
+			forums, _ := models.NeedSignForumsByUserId(user.Id)
 			w := baidu.NewForumWorker(user.Bduss)
 			forumList := baidu.ForumList{}
 			for _, forum := range forums {
