@@ -66,6 +66,15 @@ func AddForum(forum *Forum) (int64, error) {
 	return orm.NewOrm().InsertOrUpdate(forum)
 }
 
+func AllForums() ([]*Forum, int64) {
+	forums := make([]*Forum, 0)
+	total, err := orm.NewOrm().QueryTable(TableName("forums")).All(&forums)
+	if err != nil {
+		return nil, 0
+	}
+	return forums, total
+}
+
 func (f *Forum) Update(fields ...string) error {
 	if _, err := orm.NewOrm().Update(f, fields...); err != nil {
 		return err

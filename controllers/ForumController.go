@@ -11,7 +11,6 @@ type ForumController struct {
 // 获取一个用户的所有的贴吧
 
 func (this *ForumController) GetForums() {
-
 	userId, _ := this.GetInt("userId", 1)
 	forums, total := models.GetForumsByUserId(userId)
 	out := make(map[string]interface{})
@@ -22,4 +21,11 @@ func (this *ForumController) GetForums() {
 
 func (this *ForumController) AddForum() {
 
+}
+
+// restful api
+func (this *ForumController) Get() {
+	userId, _ := this.GetInt("userId", 1)
+	forums, _ := models.GetForumsByUserId(userId)
+	this.jsonResult(forums)
 }

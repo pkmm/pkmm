@@ -4,8 +4,8 @@ import (
 	"github.com/astaxie/beego"
 	_ "github.com/go-sql-driver/mysql"
 	"pkmm/models"
-	"pkmm/controllers"
 	_ "pkmm/utils"
+	"pkmm/controllers"
 )
 
 func main() {

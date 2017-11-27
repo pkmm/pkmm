@@ -16,17 +16,17 @@ import (
 func init() {
 	ns := beego.NewNamespace("/v1",
 
-		//beego.NSNamespace("/t_forums",
-		//	beego.NSInclude(
-		//		&controllers.TForumsController{},
-		//	),
-		//),
-
-		beego.NSNamespace("/t_user",
+		beego.NSNamespace("/forums",
 			beego.NSInclude(
-				&controllers.TUserController{},
+				&controllers.ForumController{},
 			),
 		),
+
+		//beego.NSNamespace("/t_user",
+		//	beego.NSInclude(
+		//		&controllers.UserController{},
+		//	),
+		//),
 	)
 	beego.AddNamespace(ns)
 }
