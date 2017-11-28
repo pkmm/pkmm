@@ -39,7 +39,6 @@ func NeedSignForumsByUserId(userId int) ([]*Forum, int64) {
 	total, err := orm.NewOrm().QueryTable(TableName("forums")).
 		Filter("user_id", userId).
 		Exclude("fid", -1).
-		Exclude("last_sign", time.Now().Day()).
 		All(&forums)
 	if err != nil {
 		return nil, 0
