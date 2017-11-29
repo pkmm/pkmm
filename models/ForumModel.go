@@ -37,6 +37,7 @@ func GetForumsByUserId(userId int) ([]*Forum, int64) {
 func NeedSignForumsByUserId(userId int) ([]*Forum, int64) {
 	forums := make([]*Forum, 0)
 	total, err := orm.NewOrm().QueryTable(TableName("forums")).
+		Exclude("last_sign", -1).
 		Filter("user_id", userId).
 		Exclude("fid", -1).
 		All(&forums)

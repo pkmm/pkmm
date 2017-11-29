@@ -21,7 +21,7 @@ type ChannelData struct {
 	Fid string
 }
 
-var syncUsersForumsFromOfficial = toolbox.NewTask("syncUsersForumsFromOfficial", "0 30 23,18,10 * * *", func() error {
+var syncUsersForumsFromOfficial = toolbox.NewTask("syncUsersForumsFromOfficial", "0 30 10 * * *", func() error {
 	//fmt.Println("begin get Userlist")
 	users, total, err := models.GetAllUsers()
 	if err != nil {
