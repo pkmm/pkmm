@@ -33,7 +33,6 @@ func (this *UserController) UserRegister() {
 // @router /:uid([0-9]+) [get]
 func (this *UserController) GetUser() {
 	uid := this.Ctx.Input.Param(":uid")
-	fmt.Println(uid)
 	user, err := models.UserGetById(uid)
 	out := make(map[string]interface{}, 0)
 	if err != nil {
