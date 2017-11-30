@@ -22,11 +22,11 @@ func init() {
 			),
 		),
 
-		//beego.NSNamespace("/t_user",
-		//	beego.NSInclude(
-		//		&controllers.UserController{},
-		//	),
-		//),
+		beego.NSNamespace("/users",
+			beego.NSInclude(
+				&controllers.UserController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
