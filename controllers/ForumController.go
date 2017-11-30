@@ -9,7 +9,6 @@ type ForumController struct {
 }
 
 // 获取一个用户的所有的贴吧
-
 func (this *ForumController) GetForums() {
 	userId, _ := this.GetInt("userId", 1)
 	forums, total := models.GetForumsByUserId(userId)
@@ -23,9 +22,9 @@ func (this *ForumController) AddForum() {
 
 }
 
-// restful api
+// @router /:uid([0-9]+) [get]
 func (this *ForumController) Get() {
-	userId, _ := this.GetInt("userId", 1)
+	userId, _ := this.GetInt("uid", 1)
 	forums, _ := models.GetForumsByUserId(userId)
 	this.jsonResult(forums)
 }

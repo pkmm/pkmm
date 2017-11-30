@@ -5,6 +5,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"pkmm/models"
 	_ "pkmm/utils"
+	_ "pkmm/routers"
 	"pkmm/controllers"
 )
 
