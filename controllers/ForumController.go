@@ -10,7 +10,7 @@ type ForumController struct {
 
 // 获取一个用户的所有的贴吧
 func (this *ForumController) GetForums() {
-	userId, _ := this.GetInt("userId", 1)
+	userId := this.GetString("userId", "1")
 	forums, total := models.GetForumsByUserId(userId)
 	out := make(map[string]interface{})
 	out["total"] = total
@@ -24,7 +24,7 @@ func (this *ForumController) AddForum() {
 
 // @router /:uid([0-9]+) [get]
 func (this *ForumController) Get() {
-	userId, _ := this.GetInt("uid", 1)
-	forums, _ := models.GetForumsByUserId(userId)
+	uid := this.Ctx.Input.Param(":uid")
+	forums, _ := models.GetForumsByUserId(uid)
 	this.jsonResult(forums)
 }
