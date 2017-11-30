@@ -6,7 +6,6 @@ import (
 	"github.com/astaxie/beego/utils"
 	myUtils "pkmm/utils"
 	"time"
-	"fmt"
 )
 
 type UserController struct {
