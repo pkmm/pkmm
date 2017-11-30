@@ -14,6 +14,9 @@ type User struct {
 	Bduss     string
 }
 
+var canShow = []string{"id", "user_name", "email", "status", "last_login", "created_at"}
+
+
 func (t *User) TableName() string {
 	return TableName("user")
 }
@@ -27,9 +30,9 @@ func (u *User) Update(fields ...string) error {
 }
 
 
-func UserGetById(id int) (*User, error) {
+func UserGetById(id string) (*User, error) {
 	u := new(User)
-	err := orm.NewOrm().QueryTable(TableName("user")).Filter("id", id).One(u)
+	err := orm.NewOrm().QueryTable(TableName("user")).Filter("id", id).One(u, canShow...)
 	if err != nil {
 		return u, err
 	}
@@ -38,7 +41,7 @@ func UserGetById(id int) (*User, error) {
 
 func UserGetByName(name string) (*User, error) {
 	u := new(User)
-	err := orm.NewOrm().QueryTable(TableName("user")).Filter("username", name).One(u)
+	err := orm.NewOrm().QueryTable(TableName("user")).Filter("username", name).One(u, canShow...)
 	if err != nil {
 		return u, err
 	}
