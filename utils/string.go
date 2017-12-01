@@ -3,7 +3,6 @@ package utils
 import (
 	"crypto/md5"
 	"fmt"
-	"time"
 )
 
 func Md5(buf []byte) string {
