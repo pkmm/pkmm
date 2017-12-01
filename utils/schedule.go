@@ -21,7 +21,8 @@ type ChannelData struct {
 	Fid string
 }
 
-var syncUsersForumsFromOfficial = toolbox.NewTask("syncUsersForumsFromOfficial", "0 30 10 * * *", func() error {
+var syncUsersForumsFromOfficial = toolbox.NewTask("syncUsersForumsFromOfficial", "0 0 23 * * *", func() error {
+	// 每天11:00 PM 更新贴吧
 	//fmt.Println("begin get Userlist")
 	users, total, err := models.GetAllUsers()
 	if err != nil {
@@ -59,8 +60,8 @@ var syncUsersForumsFromOfficial = toolbox.NewTask("syncUsersForumsFromOfficial",
 	return nil
 })
 
-var signForums = toolbox.NewTask("sign", "0 0 0,12,11 * * *", func() error {
-
+var signForums = toolbox.NewTask("sign", "0 0 0 * * *", func() error {
+	// 每天 0:00 签到贴吧
 	users, total, err := models.GetAllUsers()
 	if total == 0 {
 		return nil
