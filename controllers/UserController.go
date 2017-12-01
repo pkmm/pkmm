@@ -47,18 +47,20 @@ func (this *UserController) UpdateUser() {
 	bduss := this.GetString("bduss")
 	out := make(map[string]interface{}, 0)
 	if bduss == "" {
-		out["msg"] = MSG_ERR
+		out["msg"] = "bduss is empty"
+		out["code"] = MSG_ERR
 		this.jsonResult(out)
 	}
+
 	user, err := models.UserGetById(uid)
 	if err != nil {
-		out["msg"] = MSG_ERR
+		out["code"] = MSG_ERR
+		out["msg"] = err
 		this.jsonResult(out)
 	}
-	user.Bduss = this.GetString("bduss")
-	if user.Bduss != "" {
-		user.Update("bduss")
-	}
-	out["msg"] = MSG_OK
+	user.Bduss = bduss
+	user.Update("bduss")
+	out["code"] = MSG_OK
+	out["msg"] = "success update bduss"
 	this.jsonResult(out)
 }
