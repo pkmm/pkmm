@@ -11,8 +11,3 @@ func Md5(buf []byte) string {
 	hash.Write(buf)
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
-
-func Today() int{
-	loc, _ := time.LoadLocation("Asia/Shanghai")
-	return time.Now().In(loc).Day()
-}
