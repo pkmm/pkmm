@@ -2,6 +2,7 @@
 
 #停止应用
 killall pkmm
+sleep 1
 echo "关闭了进程 pkmm"
 #更新
 git pull
