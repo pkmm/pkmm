@@ -29,8 +29,8 @@ type ResponseJson struct {
 
 func prepareResponseData(forums []*models.Forum) *map[int]ResponseJson {
 	result := make(map[int]ResponseJson)
-	replyJson := ReplyJson{}
 	for index, forum := range forums {
+		replyJson := ReplyJson{}
 		json.Unmarshal([]byte(forum.ReplyJson), &replyJson)
 		result[index] = ResponseJson{
 			forum.Id,
