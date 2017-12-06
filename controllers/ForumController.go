@@ -27,11 +27,7 @@ type ResponseJson struct {
 	SignInfo  ReplyJson
 }
 
-// 获取一个用户的所有的贴吧
-func (this *ForumController) GetForums() {
-	userId := this.GetString("userId", "1")
-	forums, total := models.GetForumsByUserId(userId)
-	out := make(map[string]interface{})
+func prepareResponseData(forums []*models.Forum) *map[int]ResponseJson {
 	var replyJson ReplyJson
 	result := make(map[int]ResponseJson)
 	for index, forum := range forums {
@@ -44,9 +40,16 @@ func (this *ForumController) GetForums() {
 			replyJson,
 		}
 	}
+	return &result
+}
 
+// 获取一个用户的所有的贴吧
+func (this *ForumController) GetForums() {
+	userId := this.GetString("userId", "1")
+	forums, total := models.GetForumsByUserId(userId)
+	out := make(map[string]interface{})
 	out["total"] = total
-	out["forums"] = result
+	out["forums"] = prepareResponseData(forums)
 	this.jsonResult(out)
 }
 
@@ -58,5 +61,5 @@ func (this *ForumController) AddForum() {
 func (this *ForumController) Get() {
 	uid := this.Ctx.Input.Param(":uid")
 	forums, _ := models.GetForumsByUserId(uid)
-	this.jsonResult(forums)
+	this.jsonResult(prepareResponseData(forums))
 }
