@@ -27,7 +27,7 @@ func GetForumsByUserId(userId string) ([]*Forum, int64) {
 	forums := make([]*Forum, 0)
 	total, err := orm.NewOrm().QueryTable(TableName("forums")).
 		Filter("user_id", userId).
-		All(&forums)
+		All(&forums, "Id", "Kw", "LastSign", "CreatedAt", "ReplyJson")
 	if err != nil {
 		return nil, 0
 	}
