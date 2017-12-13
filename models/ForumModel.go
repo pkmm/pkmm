@@ -11,8 +11,8 @@ type Forum struct {
 	UserId     int
 	Kw         string
 	Fid        int
-	LastSign   int
-	SignStatus int
+	LastSign   int // 默认值-1 表示第一次添加， 以后同步的时候设置为0
+	SignStatus int // 默认值-1 1表示要签到的， 0 禁用
 	CreatedAt  int64
 	ReplyJson  string
 }
@@ -37,8 +37,9 @@ func GetForumsByUserId(userId string) ([]*Forum, int64) {
 func NeedSignForumsByUserId(userId int) ([]*Forum, int64) {
 	forums := make([]*Forum, 0)
 	total, err := orm.NewOrm().QueryTable(TableName("forums")).
-		Exclude("last_sign", time.Now().Day()).
+		Filter("last_sign", 0).
 		Filter("user_id", userId).
+		Filter("sign_status", 1).
 		Exclude("fid", -1).
 		All(&forums)
 	if err != nil {
@@ -57,13 +58,10 @@ func AddForum(forum *Forum) (int64, error) {
 	if forum.Kw == "" {
 		return 0, fmt.Errorf("贴吧的kw不能为空")
 	}
-	if forum.LastSign == 0 {
-		forum.LastSign = -1
-	}
 	if forum.CreatedAt == 0 {
 		forum.CreatedAt = time.Now().Unix()
 	}
-	return orm.NewOrm().InsertOrUpdate(forum)
+	return orm.NewOrm().InsertOrUpdate(forum, "last_sign", "sign_status")
 }
 
 func AllForums() ([]*Forum, int64) {

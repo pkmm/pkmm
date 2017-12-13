@@ -47,13 +47,12 @@ var syncUsersForumsFromOfficial = toolbox.NewTask("syncUsersForumsFromOfficial",
 			for size > 0 {
 				mp := <-ch
 				fid, _ := strconv.Atoi(mp.Fid)
-				forum := models.Forum{UserId: user.Id, Fid: fid, Kw: mp.Kw, LastSign: -1}
-				num, _ := orm.NewOrm().QueryTable(models.TableName("forums")).Filter("user_id", user.Id).Filter("kw", mp.Kw).Count()
-				if num == 0 {
-					models.AddForum(&forum)
-				}
+				forum := models.Forum{UserId: user.Id, Fid: fid, Kw: mp.Kw, LastSign: 0, SignStatus: 1}
+				models.AddForum(&forum)
 				size--
 			}
+			// 软删除 user 已经取消关注的贴吧
+			orm.NewOrm().Raw("update t_forums set sign_status = 0 where last_sign != 0 and user_id = ?", user.Id)
 		}(user)
 	}
 	//fmt.Println("end task")
