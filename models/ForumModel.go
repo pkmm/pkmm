@@ -15,6 +15,7 @@ type Forum struct {
 	SignStatus int // 默认值-1 1表示要签到的， 0 禁用
 	CreatedAt  int64
 	ReplyJson  string
+	IsDeleted  int
 }
 
 // 每一个表需要实现 这个方法 才能使模型被正确的注册
@@ -37,9 +38,9 @@ func GetForumsByUserId(userId string) ([]*Forum, int64) {
 func NeedSignForumsByUserId(userId int) ([]*Forum, int64) {
 	forums := make([]*Forum, 0)
 	total, err := orm.NewOrm().QueryTable(TableName("forums")).
-		Filter("last_sign", 0).
+		Exclude("last_sign", time.Now().Day()).
 		Filter("user_id", userId).
-		Filter("sign_status", 1).
+		Filter("is_deleted", 0).
 		Exclude("fid", -1).
 		All(&forums)
 	if err != nil {

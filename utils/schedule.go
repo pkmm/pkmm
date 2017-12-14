@@ -34,6 +34,7 @@ var syncUsersForumsFromOfficial = toolbox.NewTask("syncUsersForumsFromOfficial",
 	//fmt.Printf("一共 %d 位用户需要更新\n", total)
 	for _, user := range users {
 		go func(user *models.User) {
+			orm.NewOrm().Raw("update t_forums set is_deleted = 1 where user_id = ?", user.Id).Exec()
 			w := baidu.NewForumWorker(user.Bduss)
 			forums := w.RetrieveForums()
 			size := len(forums)
@@ -47,12 +48,16 @@ var syncUsersForumsFromOfficial = toolbox.NewTask("syncUsersForumsFromOfficial",
 			for size > 0 {
 				mp := <-ch
 				fid, _ := strconv.Atoi(mp.Fid)
-				forum := models.Forum{UserId: user.Id, Fid: fid, Kw: mp.Kw, LastSign: 0, SignStatus: 1}
-				models.AddForum(&forum)
+				has, _ := orm.NewOrm().QueryTable(models.TableName("forums")).Filter("user_id", user.Id).
+					Filter("kw", mp.Kw).Filter("fid", fid).Count()
+				if has == 0 {
+					orm.NewOrm().Raw("insert into t_forums(user_id, fid, kw, last_sign, created_at, is_deleted) values(?,?,?,?,?,?)",
+						user.Id, fid, mp.Kw, -1, time.Now().Unix(), 0).Exec()
+				} else {
+					orm.NewOrm().Raw("update t_forums set is_deleted = 0 where user_id = ? and fid = ? and kw = ?", user.Id, fid, mp.Kw).Exec()
+				}
 				size--
 			}
-			// 软删除 user 已经取消关注的贴吧
-			orm.NewOrm().Raw("update t_forums set sign_status = 0 where last_sign != 0 and user_id = ?", user.Id)
 		}(user)
 	}
 	//fmt.Println("end task")
