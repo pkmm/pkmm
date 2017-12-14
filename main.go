@@ -18,7 +18,7 @@ func main() {
 
 	// 数据库迁移
 	migration.Upgrade(0)
-	
+
 	beego.Router("/", &controllers.ForumController{}, "*:GetForums")
 
 	beego.Run()
