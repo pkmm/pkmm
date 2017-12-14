@@ -7,12 +7,14 @@ import (
 	_ "pkmm/utils"
 	_ "pkmm/routers"
 	"pkmm/controllers"
+	"github.com/astaxie/beego/migration"
 )
 
 func main() {
 
 	models.Init()
 
+	migration.Upgrade(0)
 	beego.Router("/", &controllers.ForumController{}, "*:GetForums")
 
 	beego.Run()
