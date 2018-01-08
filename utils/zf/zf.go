@@ -212,6 +212,7 @@ func imgToString(imageFilePath string) string {
 	//fmt.Println("decode verify code:", err)
 	//fmt.Println(string(ans))
 	if err != nil {
+		fmt.Println(err)
 		panic("exit")
 	}
 	rs := string(ans)
