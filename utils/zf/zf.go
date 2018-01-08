@@ -208,7 +208,7 @@ func Login(num, pwd string) [][]string {
 
 // 通过图片的路径去取图片然后识别验证码（python识别代码实现）
 func imgToString(imageFilePath string) string {
-	ans, err := exec.Command("E:\\python27\\python2.exe", "./utils/zf/verifyCode/test.py", imageFilePath).Output()
+	ans, err := exec.Command("python", "./utils/zf/verifyCode/test.py", imageFilePath).Output()
 	//fmt.Println("decode verify code:", err)
 	//fmt.Println(string(ans))
 	if err != nil {
