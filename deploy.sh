@@ -16,5 +16,5 @@ echo "编译完成~~"
 
 #启动
 #nohup ./pkmm 2>&1 >> info.log 2>&1 /dev/null &
-nohup ./pkmm 1> pkmm_server.out 2> pkmm_server.err
+nohup ./pkmm 1> pkmm_server.out 2> pkmm_server.err &
 echo "已经启动了！"
