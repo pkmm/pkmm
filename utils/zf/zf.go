@@ -18,6 +18,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"crypto/rand"
+	"pkmm/utils"
 )
 
 const (
@@ -53,7 +54,7 @@ func getViewState(html []byte) string {
 func downloadImage() string {
 	rep, _ := client.Get(baseUrl + codeUrl)
 	picName := UniqueId() + ".png"
-	out, _ := os.Create("./utils/zf/verifyCode/" + picName)
+	out, _ := os.Create(utils.GetCurrentDirectory() + "/utils/zf/verifyCode/" + picName)
 	io.Copy(out, rep.Body)
 	defer out.Close()
 	//fmt.Printf("验证码 已经保存: %s\n", picName)
@@ -208,7 +209,7 @@ func Login(num, pwd string) [][]string {
 
 // 通过图片的路径去取图片然后识别验证码（python识别代码实现）
 func imgToString(imageFilePath string) string {
-	ans, err := exec.Command("/usr/bin/python", "./utils/zf/verifyCode/test.py", imageFilePath).Output()
+	ans, err := exec.Command("/usr/bin/python", utils.GetCurrentDirectory() + "/utils/zf/verifyCode/test.py", imageFilePath).Output()
 	//fmt.Println("decode verify code:", err)
 	//fmt.Println(string(ans))
 	if err != nil {

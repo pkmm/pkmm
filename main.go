@@ -9,6 +9,8 @@ import (
 	"pkmm/controllers"
 	"github.com/astaxie/beego/migration"
 	_ "pkmm/database/migrations"
+	"fmt"
+	"pkmm/utils"
 )
 
 func main() {
@@ -22,5 +24,6 @@ func main() {
 	beego.Router("/", &controllers.ForumController{}, "*:GetForums")
 	beego.Router("/zf", &controllers.ZfController{})
 
+	fmt.Println(utils.GetCurrentDirectory())
 	beego.Run()
 }
