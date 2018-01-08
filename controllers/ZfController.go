@@ -9,7 +9,7 @@ type ZfController struct {
 	BaseController
 }
 
-func (this *ZfController) Post() {
+func (this *ZfController) Get() {
 	num := this.GetString("num")
 	pwd := this.GetString("pwd")
 	out := make(map[string]string)
