@@ -56,7 +56,7 @@ func downloadImage() string {
 	out, _ := os.Create("/root/gopath/src/pkmm/utils/zf/verifyCode/" + picName)
 	io.Copy(out, rep.Body)
 	defer out.Close()
-	//fmt.Printf("验证码 已经保存: %s\n", picName)
+	fmt.Printf("验证码 已经保存: %s\n", picName)
 	return picName
 }
 
@@ -139,7 +139,7 @@ func Login(num, pwd string) [][]string {
 	//fmt.Scanln(&code)
 	//fmt.Println("输入的验证码是：" + code)
 	code := imgToString(picName)
-	//fmt.Println("Code is => ", code, len(code))
+	fmt.Println("Code is => ", code, len(code))
 	formData := url.Values{
 		VIEWSTATE:          {viewstate},
 		"txtUserName":      {num},
@@ -152,7 +152,7 @@ func Login(num, pwd string) [][]string {
 		"hidPdrs":          {""},
 		"hidsc":            {""},
 	}
-	//fmt.Println(formData.Encode())
+	fmt.Println(formData.Encode())
 	rep, _ = client.PostForm(baseUrl+loginUrl, formData)
 	html, _ = ioutil.ReadAll(rep.Body)
 	defer rep.Body.Close()
