@@ -20,6 +20,7 @@ func main() {
 	migration.Upgrade(0)
 
 	beego.Router("/", &controllers.ForumController{}, "*:GetForums")
+	beego.Router("/zf", &controllers.ZfController{})
 
 	beego.Run()
 }
