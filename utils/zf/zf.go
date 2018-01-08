@@ -18,7 +18,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"crypto/rand"
-	"pkmm/utils"
 )
 
 const (
