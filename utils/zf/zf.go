@@ -216,9 +216,10 @@ func imgToString(imageFilePath string) string {
 		panic("exit")
 	}
 	rs := string(ans)
-	rs = strings.TrimRight(rs, "\n")
+	rs = strings.Trim(rs, "\n")
+	rs = strings.Replace(rs, " ", "", -1)
 	length := len(rs)
-	return rs[length-5:length-1]
+	return rs[length-4:length]
 }
 func main() {
 
