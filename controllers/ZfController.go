@@ -18,6 +18,6 @@ func (this *ZfController) Post() {
 
 
 	ret:= zf.Login(num, pwd)
-	fmt.Println(ret)
+	fmt.Println(out)
 	this.jsonResult(ret)
 }
