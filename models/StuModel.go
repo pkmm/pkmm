@@ -27,6 +27,8 @@ func CreatedOrUpdate(num, pwd string) *Stu {
 		o.Update(&stu, "num", "pwd")
 	} else {
 		stu.CreatedAt = time.Now()
+		stu.Num = num
+		stu.Pwd = pwd
 		o.Insert(&stu)
 	}
 	return &stu
