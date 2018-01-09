@@ -127,7 +127,6 @@ func retrieveScores(htmlInlocal bool, fileContent []byte) [][]string {
 }
 
 func Login(num, pwd string) [][]string {
-	return [][]string{}
 	var err error
 	rep, _ := client.Get(baseUrl)
 	html, _ := ioutil.ReadAll(rep.Body)
