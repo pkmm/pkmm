@@ -7,7 +7,6 @@ import (
 	_ "pkmm/utils"
 	_ "pkmm/routers"
 	"pkmm/controllers"
-	"github.com/astaxie/beego/migration"
 	_ "pkmm/database/migrations"
 	"fmt"
 	"pkmm/utils"
@@ -19,7 +18,7 @@ func main() {
 	models.Init()
 
 	// 数据库迁移
-	migration.Upgrade(0)
+	//migration.Upgrade(0)
 
 	beego.Router("/", &controllers.ForumController{}, "*:GetForums")
 	beego.Router("/zf", &controllers.ZfController{})

@@ -27,7 +27,13 @@ func Init() {
 
 	orm.RegisterDataBase("default", "mysql", dsn)
 
-	orm.RegisterModel(new(Forum), new(User))
+	// 模型需要在这里注册
+	orm.RegisterModel(
+		new(Forum),
+		new(User),
+		new(Stu), new(Score))
+
+
 	if beego.AppConfig.String("runmode") == "dev" {
 		orm.Debug = true
 	}

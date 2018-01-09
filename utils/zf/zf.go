@@ -2,6 +2,10 @@ package zf
 
 import (
 	"bytes"
+	"crypto/md5"
+	"crypto/rand"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
@@ -11,13 +15,9 @@ import (
 	"net/http/cookiejar"
 	"net/url"
 	"os"
+	"os/exec"
 	"regexp"
 	"strings"
-	"os/exec"
-	"encoding/base64"
-	"crypto/md5"
-	"encoding/hex"
-	"crypto/rand"
 )
 
 const (
@@ -127,6 +127,7 @@ func retrieveScores(htmlInlocal bool, fileContent []byte) [][]string {
 }
 
 func Login(num, pwd string) [][]string {
+	return [][]string{}
 	var err error
 	rep, _ := client.Get(baseUrl)
 	html, _ := ioutil.ReadAll(rep.Body)
@@ -219,37 +220,8 @@ func imgToString(imageFilePath string) string {
 	rs = strings.Trim(rs, "\n")
 	rs = strings.Replace(rs, " ", "", -1)
 	length := len(rs)
-	return rs[length-4:length]
+	return rs[length-4 : length]
 }
 func main() {
-
-	//var zf_url = "http://zfxk.zjtcm.net/xscj_gc.aspx?xh=201312203501029&xm=%D5%C5%B4%AB%B3%C9&gnmkdm=N121605"
-	//var client = &http.Client{}
-	//var cookie = http.Cookie{Name: "ASP.NET_SessionId", Value: "2j3zjo45vpijnr55pamzjzqn"}
-	//var data = url.Values{
-	//	"__VIEWSTATE": {"dDwxODI2NTc3MzMwO3Q8cDxsPHhoOz47bDwyMDEzMTIyMDM1MDEwMjk7Pj47bDxpPDE+Oz47bDx0PDtsPGk8MT47aTwzPjtpPDU+O2k8Nz47aTw5PjtpPDExPjtpPDEzPjtpPDE2PjtpPDI2PjtpPDI3PjtpPDI4PjtpPDM1PjtpPDM3PjtpPDM5PjtpPDQxPjtpPDQ1Pjs+O2w8dDxwPHA8bDxUZXh0Oz47bDzlrablj7fvvJoyMDEzMTIyMDM1MDEwMjk7Pj47Pjs7Pjt0PHA8cDxsPFRleHQ7PjtsPOWnk+WQje+8muW8oOS8oOaIkDs+Pjs+Ozs+O3Q8cDxwPGw8VGV4dDs+O2w85a2m6Zmi77ya5Yy75a2m5oqA5pyv5a2m6ZmiOz4+Oz47Oz47dDxwPHA8bDxUZXh0Oz47bDzkuJPkuJrvvJo7Pj47Pjs7Pjt0PHA8cDxsPFRleHQ7PjtsPOWMu+WtpuS/oeaBr+W3peeoizs+Pjs+Ozs+O3Q8cDxwPGw8VGV4dDs+O2w86KGM5pS/54+t77ya5Yy75a2m5L+h5oGv5bel56iLMjAxM+e6pzHnj607Pj47Pjs7Pjt0PHA8cDxsPFRleHQ7PjtsPDIwMTMwOTE2Oz4+Oz47Oz47dDx0PHA8cDxsPERhdGFUZXh0RmllbGQ7RGF0YVZhbHVlRmllbGQ7PjtsPFhOO1hOOz4+Oz47dDxpPDU+O0A8XGU7MjAxNi0yMDE3OzIwMTUtMjAxNjsyMDE0LTIwMTU7MjAxMy0yMDE0Oz47QDxcZTsyMDE2LTIwMTc7MjAxNS0yMDE2OzIwMTQtMjAxNTsyMDEzLTIwMTQ7Pj47Pjs7Pjt0PHA8O3A8bDxvbmNsaWNrOz47bDx3aW5kb3cucHJpbnQoKVw7Oz4+Pjs7Pjt0PHA8O3A8bDxvbmNsaWNrOz47bDx3aW5kb3cuY2xvc2UoKVw7Oz4+Pjs7Pjt0PHA8cDxsPFZpc2libGU7PjtsPG88dD47Pj47Pjs7Pjt0PEAwPDs7Ozs7Ozs7Ozs+Ozs+O3Q8QDA8Ozs7Ozs7Ozs7Oz47Oz47dDxAMDw7Ozs7Ozs7Ozs7Pjs7Pjt0PDtsPGk8MD47aTwxPjtpPDI+O2k8ND47PjtsPHQ8O2w8aTwwPjtpPDE+Oz47bDx0PDtsPGk8MD47aTwxPjs+O2w8dDxAMDw7Ozs7Ozs7Ozs7Pjs7Pjt0PEAwPDs7Ozs7Ozs7Ozs+Ozs+Oz4+O3Q8O2w8aTwwPjtpPDE+Oz47bDx0PEAwPDs7Ozs7Ozs7Ozs+Ozs+O3Q8QDA8Ozs7Ozs7Ozs7Oz47Oz47Pj47Pj47dDw7bDxpPDA+Oz47bDx0PDtsPGk8MD47PjtsPHQ8QDA8Ozs7Ozs7Ozs7Oz47Oz47Pj47Pj47dDw7bDxpPDA+O2k8MT47PjtsPHQ8O2w8aTwwPjs+O2w8dDxAMDxwPHA8bDxWaXNpYmxlOz47bDxvPGY+Oz4+Oz47Ozs7Ozs7Ozs7Pjs7Pjs+Pjt0PDtsPGk8MD47PjtsPHQ8QDA8cDxwPGw8VmlzaWJsZTs+O2w8bzxmPjs+Pjs+Ozs7Ozs7Ozs7Oz47Oz47Pj47Pj47dDw7bDxpPDA+Oz47bDx0PDtsPGk8MD47PjtsPHQ8cDxwPGw8VGV4dDs+O2w8SkxVOz4+Oz47Oz47Pj47Pj47Pj47dDxAMDw7Ozs7Ozs7Ozs7Pjs7Pjs+Pjs+Pjs+WUUxE3p4x9UKYY9kmhjPe0w8ZNY="},
-	//	"ddlXN":       {""},
-	//	"ddlXQ":       {""},
-	//	"Button1":     {"%B0%B4%D1%A7%C6%DA%B2%E9%D1%AF"},
-	//}
-	//r, _ := http.NewRequest("POST", zf_url, strings.NewReader(data.Encode()))
-	//r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	//r.Header.Set("Referer", zf_url)
-	//r.AddCookie(&cookie)
-	//t, err := client.Do(r)
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//body, _ := ioutil.ReadAll(t.Body)
-	////fmt.Println(string(body))
-	//re, _ := regexp.Compile(`<td>(.*?)</td>`)
-	//rets := re.FindAllSubmatch(body, -1)
-	//
-	//for k, v := range rets {
-	//	fmt.Println(k, string(v[1]))
-	//
-	//}
-
 	Login("201312203501029", "520asd")
-
 }
