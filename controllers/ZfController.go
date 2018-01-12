@@ -14,7 +14,7 @@ func (this *ZfController) Get() {
 	num := this.GetString("num")
 	pwd := this.GetString("pwd")
 	stu := models.CreatedOrUpdate(num, pwd)
-
+	beego.Debug("num: ", num, "pwd :", pwd)
 	// 用户存在(刚才创建或者已经有的
 	if stu.Id != 0 {
 		scores := models.GetScoresByStuId(stu.Id)
@@ -31,6 +31,5 @@ func (this *ZfController) Get() {
 		_, err := models.InsertScores(ret, stu.Id)
 		beego.Debug(err)
 	}
-	beego.Debug("num: ", num, "pwd :", pwd)
 	this.jsonResult(ret)
 }
