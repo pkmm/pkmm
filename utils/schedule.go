@@ -110,12 +110,24 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 	if num == 0 {
 		beego.Debug("没有学生数据")
 	}
-	beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%s位同学需要同步\n", num))
+	beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%d位同学需要同步\n", num))
 	for _, stu := range stus {
 		go func(id int64) {
-			ret := zf.Login(stu.Num, stu.Pwd)
-			if len(ret) > 1 {
-				_, err := models.InsertScores(ret, stu.Id)
+			scores := zf.Login(stu.Num, stu.Pwd)
+			if len(scores) > 1 {
+				beego.Debug("开始更新 ", num, "的成绩，共计 ", len(scores))
+				for _, row := range scores {
+					ts := &models.Score{StuId: stu.Id, CreatedAt: time.Now()}
+					ts.Xn = row[0]
+					ts.Xq = row[1]
+					ts.Kcmc = row[2]
+					ts.Xf = row[3]
+					ts.Jd = row[4]
+					ts.Cj = row[5]
+					ts.Bkcj = row[6]
+					ts.Cxcj = row[7]
+					models.InsertOrUpdateScore(stu.Id, ts)
+				}
 				if err != nil {
 					beego.Debug("插入数据到db发生错误 : num = " + stu.Num)
 				}

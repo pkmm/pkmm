@@ -23,7 +23,7 @@ func InsertScores(scores [][]string, stuId int64) (int64, error) {
 	s := make([]*Score, 0)
 	var count = 0
 	for _, row := range scores {
-		ts := &Score{StuId: stuId,CreatedAt:time.Now()}
+		ts := &Score{StuId: stuId, CreatedAt: time.Now()}
 		ts.Xn = row[0]
 		ts.Xq = row[1]
 		ts.Kcmc = row[2]
@@ -43,4 +43,14 @@ func GetScoresByStuId(stuId int64) []*Score {
 	scores := make([]*Score, 0)
 	orm.NewOrm().QueryTable("score").Filter("stu_id", stuId).All(&scores)
 	return scores
+}
+
+func InsertOrUpdateScore(stuId int64, score *Score) {
+	o := orm.NewOrm()
+	cnt, _ := o.QueryTable("score").Filter("xn", score.Xn).
+		Filter("xq", score.Xq).Filter("kcmc", score.Kcmc).Filter("stu_id", stuId).Count()
+	if cnt != 0 {
+		return
+	}
+	o.Insert(score)
 }
