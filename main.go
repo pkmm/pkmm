@@ -8,8 +8,6 @@ import (
 	_ "pkmm/routers"
 	"pkmm/controllers"
 	_ "pkmm/database/migrations"
-	"fmt"
-	"pkmm/utils"
 )
 
 func main() {
@@ -22,7 +20,6 @@ func main() {
 
 	beego.Router("/", &controllers.ForumController{}, "*:GetForums")
 	beego.Router("/zf", &controllers.ZfController{})
-
-	fmt.Println(utils.GetCurrentDirectory())
+	beego.SetLogger("file", `{"filename":"logs/pkmm.log","level":7,"daily":true,"maxdays":20}`)
 	beego.Run()
 }

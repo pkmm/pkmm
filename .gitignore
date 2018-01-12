@@ -3,3 +3,4 @@ app.conf
 *.tmp
 *.exe*
 comments*.go
+*.log

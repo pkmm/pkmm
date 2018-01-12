@@ -9,6 +9,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego"
 	"pkmm/utils/zf"
+	"fmt"
 )
 
 // 初始化函数
@@ -109,7 +110,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 	if num == 0 {
 		beego.Debug("没有学生数据")
 	}
-
+	beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%s位同学需要同步\n", num))
 	for _, stu := range stus {
 		go func(id int64) {
 			ret := zf.Login(stu.Num, stu.Pwd)
@@ -121,5 +122,6 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 			}
 		}(stu.Id)
 	}
+	beego.Debug(fmt.Sprintf("同步学生成绩结束\n"))
 	return nil
 })
