@@ -7,12 +7,15 @@ import (
 	"strconv"
 	"time"
 	"github.com/astaxie/beego/orm"
+	"github.com/astaxie/beego"
+	"pkmm/utils/zf"
 )
 
 // 初始化函数
 func init() {
 	toolbox.AddTask("syncUsersForumsFromOfficial", syncUsersForumsFromOfficial)
 	toolbox.AddTask("sign", signForums)
+	toolbox.AddTask("sync_score_from_zcmu", syncScoreFromZcmu)
 }
 
 // goroutine 通信数据机构
@@ -91,5 +94,32 @@ var signForums = toolbox.NewTask("sign", "0 0 0 * * *", func() error {
 		}(user)
 	}
 
+	return nil
+})
+
+var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func() error {
+	// todo chunk result
+	o := orm.NewOrm()
+	var stus []*models.Stu
+	num, err := o.QueryTable("stu").All(&stus)
+	if err != nil {
+		beego.Debug(err)
+		return err
+	}
+	if num == 0 {
+		beego.Debug("没有学生数据")
+	}
+
+	for _, stu := range stus {
+		go func(id int64) {
+			ret := zf.Login(stu.Num, stu.Pwd)
+			if len(ret) > 1 {
+				_, err := models.InsertScores(ret, stu.Id)
+				if err != nil {
+					beego.Debug("插入数据到db发生错误 : num = " + stu.Num)
+				}
+			}
+		}(stu.Id)
+	}
 	return nil
 })
