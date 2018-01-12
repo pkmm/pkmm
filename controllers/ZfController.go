@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"pkmm/utils/zf"
-	"fmt"
 	"pkmm/models"
 	"github.com/astaxie/beego"
 )
@@ -14,10 +13,6 @@ type ZfController struct {
 func (this *ZfController) Get() {
 	num := this.GetString("num")
 	pwd := this.GetString("pwd")
-	out := make(map[string]string)
-
-	out["num"] = num
-	out["pwd"] = pwd
 	stu := models.CreatedOrUpdate(num, pwd)
 
 	// 用户存在(刚才创建或者已经有的
@@ -36,6 +31,6 @@ func (this *ZfController) Get() {
 		_, err := models.InsertScores(ret, stu.Id)
 		beego.Debug(err)
 	}
-	fmt.Println(out)
+	beego.Debug("num: ", num, "pwd :", pwd)
 	this.jsonResult(ret)
 }
