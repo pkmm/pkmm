@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/astaxie/beego/orm"
 	"time"
+	"github.com/astaxie/beego"
 )
 
 type Score struct {
@@ -45,12 +46,13 @@ func GetScoresByStuId(stuId int64) []*Score {
 	return scores
 }
 
-func InsertOrUpdateScore(stuId int64, score *Score) {
+func InsertOrUpdateScore(score *Score) {
 	o := orm.NewOrm()
 	cnt, _ := o.QueryTable("score").Filter("xn", score.Xn).
-		Filter("xq", score.Xq).Filter("kcmc", score.Kcmc).Filter("stu_id", stuId).Count()
+		Filter("xq", score.Xq).Filter("kcmc", score.Kcmc).Filter("stu_id", score.StuId).Count()
 	if cnt != 0 {
 		return
 	}
+	beego.Debug(score)
 	o.Insert(score)
 }

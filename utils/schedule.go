@@ -98,7 +98,7 @@ var signForums = toolbox.NewTask("sign", "0 0 0 * * *", func() error {
 	return nil
 })
 
-var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func() error {
+var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */5 * * * *", func() error {
 	// todo chunk result
 	o := orm.NewOrm()
 	var stus []*models.Stu
@@ -126,7 +126,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 					ts.Cj = row[5]
 					ts.Bkcj = row[6]
 					ts.Cxcj = row[7]
-					models.InsertOrUpdateScore(__stu.Id, ts)
+					models.InsertOrUpdateScore(ts)
 				}
 				if err != nil {
 					beego.Debug("插入数据到db发生错误 : num = " + __stu.Num)
