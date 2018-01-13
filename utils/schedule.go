@@ -113,9 +113,9 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */5 * * * *", fun
 	beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%d位同学需要同步\n", num))
 	for _, stu := range stus {
 		go func(__stu *models.Stu) {
-			beego.Debug(stu.Num, stu.Pwd)
+			beego.Debug("开始摸你登陆, ",__stu.Num, __stu.Pwd)
 			scores := zf.Login(__stu.Num, __stu.Pwd)
-			beego.Debug(len(scores))
+			beego.Debug("成绩的个数",len(scores))
 			if len(scores) > 1 {
 				beego.Debug("开始更新 ", __stu.Num, "的成绩，共计 ", len(scores))
 				for _, row := range scores {
