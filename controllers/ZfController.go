@@ -24,7 +24,7 @@ func (this *ZfController) Get() {
 		}
 	}
 	// 新来的， 需要添加
-	ret := zf.Login(num, pwd)
+	ret, _ := zf.Login(num, pwd)
 	if len(ret) != 0 && stu.Id != 0 {
 		// mock data
 		//ret = [][]string{{"2013-2014", "1", "数学", "22","23", "34", "34", "234"}, {"2013-2014", "1", "数学222", "22","23", "34", "34", "234"}}

@@ -114,7 +114,15 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 	for _, stu := range stus {
 		go func(__stu *models.Stu) {
 			beego.Debug("开始摸你登陆, ",__stu.Num, __stu.Pwd)
-			scores := zf.Login(__stu.Num, __stu.Pwd)
+			scores := make([][]string, 0)
+			// 登陆尝试三次
+			retry := 3
+			for try:=0; try < retry; try++ {
+				scores, err = zf.Login(__stu.Num, __stu.Pwd)
+				if err != nil {
+					beego.Debug(err)
+				}
+			}
 			beego.Debug(__stu.Num, "成绩的个数",len(scores))
 			if len(scores) > 1 {
 				beego.Debug("开始更新 ", __stu.Num, "的成绩，共计 ", len(scores))

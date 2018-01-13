@@ -18,6 +18,8 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
+	"errors"
+	"github.com/astaxie/beego"
 )
 
 const (
@@ -41,23 +43,30 @@ func init() {
 	fmt.Println("初始化成功")
 }
 
-func getViewState(html []byte) string {
+func getViewState(html []byte) (string, error) {
 	pattern, _ := regexp.Compile(`<input type="hidden" name="__VIEWSTATE" value="(.*?)" />`)
 	viewstate := pattern.FindSubmatch(html)
 	if len(viewstate) > 0 {
-		return string(viewstate[1])
+		return string(viewstate[1]), nil
 	}
-	return ""
+	return "", errors.New("解析 viewstate 失败")
 }
 
-func downloadImage() string {
-	rep, _ := client.Get(baseUrl + codeUrl)
+func downloadImage() (string, error) {
+	var err error
+	rep, err := client.Get(baseUrl + codeUrl)
+	if err != nil {
+		return "", err
+	}
 	picName := UniqueId() + ".png"
-	out, _ := os.Create("/root/gopath/src/pkmm/utils/zf/verifyCode/" + picName)
+	out, err := os.Create("/root/gopath/src/pkmm/utils/zf/verifyCode/" + picName)
+	if err != nil {
+		return "", err
+	}
 	io.Copy(out, rep.Body)
 	defer out.Close()
 	fmt.Printf("验证码 已经保存: %s\n", picName)
-	return picName
+	return picName, nil
 }
 
 //生成32位md5字串
@@ -126,20 +135,23 @@ func retrieveScores(htmlInlocal bool, fileContent []byte) [][]string {
 	return ans
 }
 
-func Login(num, pwd string) [][]string {
+func Login(num, pwd string) ([][]string, error) {
 	var err error
 	rep, _ := client.Get(baseUrl)
 	html, _ := ioutil.ReadAll(rep.Body)
-	viewstate := getViewState(html)
-	//fmt.Println(viewstate)
-	//fmt.Println(rep.Cookies())
-	picName := downloadImage()
-	//var code string
-	//fmt.Println("请输入验证码")
-	//fmt.Scanln(&code)
-	//fmt.Println("输入的验证码是：" + code)
-	code := imgToString(picName)
-	fmt.Println("Code is => ", code, len(code))
+	viewstate, err := getViewState(html)
+	if err != nil {
+		return [][]string{}, err
+	}
+	picName, err := downloadImage()
+	if err != nil {
+		return [][]string{}, err
+	}
+	code, err := imgToString(picName)
+	if err != nil {
+		return [][]string{}, err
+	}
+	beego.Debug("Code is => ", code, len(code))
 	formData := url.Values{
 		VIEWSTATE:          {viewstate},
 		"txtUserName":      {num},
@@ -164,14 +176,17 @@ func Login(num, pwd string) [][]string {
 	rep, err = client.Do(r)
 	if err != nil {
 		//fmt.Println(err)
-		return [][]string{}
+		return [][]string{}, err
 	}
 	html, _ = ioutil.ReadAll(rep.Body)
 	//tt,_ := GbkToUtf8(html)
 	//fmt.Println(string(tt))
 
 	// 获取viewstate, 用于打开成绩页面
-	newViewState := getViewState(html)
+	newViewState, err := getViewState(html)
+	if err != nil {
+		return [][]string{}, err
+	}
 	//fmt.Println(newViewState)
 	//return
 	//return
@@ -202,24 +217,23 @@ func Login(num, pwd string) [][]string {
 	//io.Copy(out, bytes.NewReader(utf8Html))
 	//defer out.Close()
 
-	return retrieveScores(false, utf8Html)
+	return retrieveScores(false, utf8Html), nil
 
 }
 
 // 通过图片的路径去取图片然后识别验证码（python识别代码实现）
-func imgToString(imageFilePath string) string {
+func imgToString(imageFilePath string) (string, error) {
 	ans, err := exec.Command("/usr/bin/python", "/root/gopath/src/pkmm/utils/zf/verifyCode/test.py", imageFilePath).Output()
 	//fmt.Println("decode verify code:", err)
-	//fmt.Println(string(ans))
+	beego.Debug(string(ans))
 	if err != nil {
-		//fmt.Println(err)
-		panic("exit")
+		return "", errors.New("识别验证码失败")
 	}
 	rs := string(ans)
 	rs = strings.Trim(rs, "\n")
 	rs = strings.Replace(rs, " ", "", -1)
 	length := len(rs)
-	return rs[length-4 : length]
+	return rs[length-4: length], nil
 }
 func main() {
 	Login("201312203501029", "520asd")
