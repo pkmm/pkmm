@@ -13,6 +13,12 @@ type BaseController struct {
 	actionName     string
 }
 
+
+//开启跨域
+func (c BaseController)Prepare() {
+	c.Ctx.Output.Header("Access-Control-Allow-Origin", "")
+}
+
 // 输出json
 func (this *BaseController) jsonResult(out interface{}) {
 	this.Data["json"] = out
