@@ -16,7 +16,7 @@ type BaseController struct {
 
 //开启跨域
 func (c BaseController)Prepare() {
-	c.Ctx.Output.Header("Access-Control-Allow-Origin", "")
+	c.Ctx.Output.Header("Access-Control-Allow-Origin", "*")
 }
 
 // 输出json
