@@ -98,7 +98,7 @@ var signForums = toolbox.NewTask("sign", "0 0 0 * * *", func() error {
 	return nil
 })
 
-var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */5 * * * *", func() error {
+var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func() error {
 	// todo chunk result
 	o := orm.NewOrm()
 	var stus []*models.Stu
