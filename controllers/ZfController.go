@@ -33,3 +33,15 @@ func (this *ZfController) Get() {
 	}
 	this.jsonResult(ret)
 }
+
+func (this *ZfController) Post() {
+	num := this.GetString("num")
+	pwd := this.GetString("pwd")
+	if num == "" || pwd == "" {
+		this.jsonResult(map[string]string{"status":"error"})
+	}
+	this.Ctx.SetCookie("num", num)
+	this.Ctx.SetCookie("pwd", pwd)
+
+	this.jsonResult(map[string]string{"status" : "success"})
+}
