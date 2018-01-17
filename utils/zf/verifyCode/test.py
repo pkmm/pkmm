@@ -75,7 +75,7 @@ def verify(url, save=False):
         data.append(map(scale, list(single_pic.getdata())))
         if save:
             single_pic.save(picBaseUrl + 'todo-%s.png' % i)
-    p_label, p_acc, p_val = svm_predict([1, 2, 6, 3], data, m)
+    p_label, p_acc, p_val = svm_predict([1, 2, 6, 3], data, m, '-q')
 
     answers = p_label
 

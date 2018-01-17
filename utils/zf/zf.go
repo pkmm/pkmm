@@ -230,10 +230,7 @@ func imgToString(imageFilePath string) (string, error) {
 		return "", errors.New("识别验证码失败")
 	}
 	rs := string(ans)
-	rs = strings.Trim(rs, "\n")
-	rs = strings.Replace(rs, " ", "", -1)
-	length := len(rs)
-	return rs[length-4: length], nil
+	return rs[:4], nil
 }
 func main() {
 	Login("201312203501029", "520asd")
