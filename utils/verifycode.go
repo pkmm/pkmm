@@ -150,11 +150,6 @@ func Predict(save bool) string {
 	rep, _ := http.Get("http://zfxk.zjtcm.net/CheckCode.aspx")
 	pix, _ := ioutil.ReadAll(rep.Body)
 	defer rep.Body.Close()
-	if save {
-		fp, _ := os.Create(path.Join(getSourceCodePath(), "tmp.png"))
-		io.Copy(fp, bytes.NewReader(pix))
-		defer fp.Close()
-	}
 	model := libSvm.NewModelFromFile(path.Join(getSourceCodePath(), "zf.model"))
 	im, _, _ := image.Decode(bytes.NewReader(pix))
 	vec := crop(im, "loc")
@@ -167,6 +162,11 @@ func Predict(save bool) string {
 		predictLabel := model.Predict(x)
 		ans := byte(predictLabel)
 		ret = append(ret, ans)
+	}
+	if save {
+		fp, _ := os.Create(path.Join(getSourceCodePath(), string(ret) + ".png"))
+		io.Copy(fp, bytes.NewReader(pix))
+		defer fp.Close()
 	}
 	return string(ret)
 }
