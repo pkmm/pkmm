@@ -98,7 +98,7 @@ def verify_local_img(img_name):
         single_pic = image.crop(
             (center - (piece + 2), 1, center + (piece + 2), y_size))
         data.append(map(scale, list(single_pic.getdata())))
-    p_label, p_acc, p_val = svm_predict([1, 2, 6, 3], data, m)
+    p_label, p_acc, p_val = svm_predict([1, 2, 6, 3], data, m,  "-q")
 
     answers = p_label
 
