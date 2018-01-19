@@ -209,7 +209,7 @@ func Login(num, pwd string) ([][]string, error) {
 
 }
 
-// 通过图片的路径去取图片然后识别验证码（python识别代码实现）
+// 通过图片的路径去取图片然后识别验证码（python识别代码实现） //已经废弃
 func imgToString(imageFilePath string) (string, error) {
 	ans, err := exec.Command("/usr/bin/python", "/root/gopath/src/pkmm/utils/zf/verifyCode/test.py", imageFilePath).Output()
 	//fmt.Println("decode verify code:", err)
