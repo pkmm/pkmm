@@ -137,7 +137,7 @@ func Login(num, pwd string) ([][]string, error) {
 	if err != err {
 		return [][]string{}, errors.New("加载验证码失败")
 	}
-	code := Predict(rep.Body, true)
+	code := Predict(rep.Body, false)
 
 	beego.Debug("num", num, "Code is => ", code, len(code))
 	formData := url.Values{
