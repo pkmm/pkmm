@@ -116,8 +116,14 @@ func retrieveScores(htmlInlocal bool, fileContent []byte) [][]string {
 
 func Login(num, pwd string) ([][]string, error) {
 	var err error
-	rep, _ := client.Get(baseUrl)
-	html, _ := ioutil.ReadAll(rep.Body)
+	rep, err := client.Get(baseUrl)
+	if err != nil {
+		return [][]string{}, err
+	}
+	html, err := ioutil.ReadAll(rep.Body)
+	if err != nil {
+		return [][]string{}, err
+	}
 	viewstate, err := getViewState(html)
 	if err != nil {
 		return [][]string{}, err
@@ -153,20 +159,32 @@ func Login(num, pwd string) ([][]string, error) {
 		"hidsc":            {""},
 	}
 	fmt.Println(formData.Encode())
-	rep, _ = client.PostForm(baseUrl+loginUrl, formData)
-	html, _ = ioutil.ReadAll(rep.Body)
+	rep, err = client.PostForm(baseUrl+loginUrl, formData)
+	if err != nil {
+		return [][]string{}, err
+	}
+	html, err = ioutil.ReadAll(rep.Body)
+	if err != nil {
+		return [][]string{}, err
+	}
 	defer rep.Body.Close()
 	//tt,_ := GbkToUtf8(html)
 	//fmt.Println(string(tt))
 
-	r, _ := http.NewRequest(GET, "http://zfxk.zjtcm.net/xscj_gc.aspx?xh="+num+"&xm=%D5%C5%B4%AB%B3%C9&gnmkdm=N121605", nil)
+	r, err := http.NewRequest(GET, "http://zfxk.zjtcm.net/xscj_gc.aspx?xh="+num+"&xm=%D5%C5%B4%AB%B3%C9&gnmkdm=N121605", nil)
+	if err != nil {
+		return [][]string{}, err
+	}
 	r.Header.Set("Referer", "http://zfxk.zjtcm.net/xs_main.aspx?xh="+num)
 	rep, err = client.Do(r)
 	if err != nil {
 		//fmt.Println(err)
 		return [][]string{}, err
 	}
-	html, _ = ioutil.ReadAll(rep.Body)
+	html, err = ioutil.ReadAll(rep.Body)
+	if err != nil {
+		return [][]string{}, err
+	}
 	//tt,_ := GbkToUtf8(html)
 	//fmt.Println(string(tt))
 
@@ -186,9 +204,12 @@ func Login(num, pwd string) ([][]string, error) {
 	formData.Set("ddlXQ", ddlXQ)
 	formData.Set("Button2", "%D4%DA%D0%A3%D1%A7%CF%B0%B3%C9%BC%A8%B2%E9%D1%AF")
 
-	r, _ = http.NewRequest(POST,
+	r, err = http.NewRequest(POST,
 		"http://zfxk.zjtcm.net/xscj_gc.aspx?xh="+num+"&xm=%D5%C5%B4%AB%B3%C9&gnmkdm=N121605",
 		strings.NewReader(formData.Encode()))
+	if err != nil {
+		return [][]string{}, err
+	}
 	r.Header.Set("Referer", "http://zfxk.zjtcm.net/xs_main.aspx?xh="+num)
 	r.Header.Set("Host", "zfxk.zjtcm.net")
 	r.Header.Set("Content-Type", "application/x-www-form-urlencoded") // 很重要
@@ -196,9 +217,15 @@ func Login(num, pwd string) ([][]string, error) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	html, _ = ioutil.ReadAll(rep.Body)
+	html, err = ioutil.ReadAll(rep.Body)
+	if err != nil {
+		return [][]string{}, err
+	}
 	defer rep.Body.Close()
-	utf8Html, _ := GbkToUtf8(html)
+	utf8Html, err := GbkToUtf8(html)
+	if err != nil {
+		return [][]string{}, err
+	}
 
 	//fmt.Print(string(utf8Html))
 	//out, _ := os.Create("html.txt")
