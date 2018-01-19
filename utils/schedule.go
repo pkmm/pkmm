@@ -119,7 +119,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 			for try := 0; try < retry; try++ {
 				scores, err = Login(__stu.Num, __stu.Pwd)
 				if err != nil {
-					beego.Debug(__stu.Num, "登陆发生错误", err)
+					beego.Debug("第", try, "登陆", __stu.Num, "登陆发生错误", err)
 				} else {
 					break
 				}
