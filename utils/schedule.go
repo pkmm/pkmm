@@ -115,7 +115,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 			beego.Debug("开始登陆, 序号: ", indx, __stu.Num, __stu.Pwd)
 			scores := make([][]string, 0)
 			// 登陆尝试三次
-			retry := 3
+			retry := 20
 			for try := 0; try < retry; try++ {
 				scores, err = Login(__stu.Num, __stu.Pwd)
 				if err != nil {
