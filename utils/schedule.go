@@ -120,6 +120,8 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 				scores, err = Login(__stu.Num, __stu.Pwd)
 				if err != nil {
 					beego.Debug(__stu.Num, "登陆发生错误", err)
+				} else {
+					break
 				}
 				beego.Debug(fmt.Sprintf("第 %d 次尝试登陆 %s 的账号.", try, __stu.Num))
 			}
