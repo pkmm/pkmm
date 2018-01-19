@@ -40,7 +40,6 @@ func init() {
 	client = &http.Client{
 		Jar: cookieJar,
 	}
-	fmt.Println("初始化成功")
 }
 
 func getViewState(html []byte) (string, error) {
@@ -65,7 +64,7 @@ func downloadImage() (string, error) {
 	}
 	io.Copy(out, rep.Body)
 	defer out.Close()
-	fmt.Printf("验证码 已经保存: %s\n", picName)
+	beego.Debug("验证码 已经保存: %s\n", picName)
 	return picName, nil
 }
 

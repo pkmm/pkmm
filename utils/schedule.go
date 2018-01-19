@@ -111,19 +111,20 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 		beego.Debug("没有学生数据")
 	}
 	beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%d位同学需要同步\n", num))
-	for _, stu := range stus {
-		go func(__stu *models.Stu) {
-			beego.Debug("开始摸你登陆, ",__stu.Num, __stu.Pwd)
+	for i, stu := range stus {
+		go func(__stu *models.Stu, indx int) {
+			beego.Debug("开始登陆, 序号: ", indx, __stu.Num, __stu.Pwd)
 			scores := make([][]string, 0)
 			// 登陆尝试三次
 			retry := 3
-			for try:=0; try < retry; try++ {
+			for try := 0; try < retry; try++ {
 				scores, err = zf.Login(__stu.Num, __stu.Pwd)
 				if err != nil {
 					beego.Debug(err)
 				}
+				beego.Debug(fmt.Sprintf("第 %d 次尝试登陆 %s 的账号.", try, stu.Num))
 			}
-			beego.Debug(__stu.Num, "成绩的个数",len(scores))
+			beego.Debug(__stu.Num, "成绩的个数", len(scores))
 			if len(scores) > 1 {
 				beego.Debug("开始更新 ", __stu.Num, "的成绩，共计 ", len(scores))
 				for _, row := range scores {
@@ -142,8 +143,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 					beego.Debug("插入数据到db发生错误 : num = " + __stu.Num)
 				}
 			}
-		}(stu)
+		}(stu, i)
 	}
-	beego.Debug(fmt.Sprintf("同步学生成绩结束\n"))
 	return nil
 })
