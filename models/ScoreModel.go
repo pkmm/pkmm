@@ -1,9 +1,9 @@
 package models
 
 import (
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"time"
-	"github.com/astaxie/beego"
 )
 
 type Score struct {
@@ -34,7 +34,7 @@ func InsertScores(scores [][]string, stuId int64) (int64, error) {
 		ts.Bkcj = row[6]
 		ts.Cxcj = row[7]
 		s = append(s, ts)
-		count ++
+		count++
 	}
 	successNum, err := orm.NewOrm().InsertMulti(count, s)
 	return successNum, err

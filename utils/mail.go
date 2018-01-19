@@ -1,9 +1,9 @@
 package utils
 
 import (
-	"github.com/astaxie/beego/utils"
-	"github.com/astaxie/beego"
 	"fmt"
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/utils"
 	"time"
 )
 

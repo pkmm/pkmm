@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"pkmm/utils/zf"
-	"pkmm/models"
 	"github.com/astaxie/beego"
+	"pkmm/models"
+	"pkmm/utils"
 )
 
 type ZfController struct {
@@ -24,7 +24,7 @@ func (this *ZfController) Get() {
 		}
 	}
 	// 新来的， 需要添加
-	ret, _ := zf.Login(num, pwd)
+	ret, _ := utils.Login(num, pwd)
 	if len(ret) != 0 && stu.Id != 0 {
 		// mock data
 		//ret = [][]string{{"2013-2014", "1", "数学", "22","23", "34", "34", "234"}, {"2013-2014", "1", "数学222", "22","23", "34", "34", "234"}}
@@ -38,10 +38,10 @@ func (this *ZfController) Post() {
 	num := this.GetString("num")
 	pwd := this.GetString("pwd")
 	if num == "" || pwd == "" {
-		this.jsonResult(map[string]string{"status":"error"})
+		this.jsonResult(map[string]string{"status": "error"})
 	}
 	this.Ctx.SetCookie("num", num)
 	this.Ctx.SetCookie("pwd", pwd)
 
-	this.jsonResult(map[string]string{"status" : "success"})
+	this.jsonResult(map[string]string{"status": "success"})
 }

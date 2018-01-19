@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"pkmm/models"
 	"encoding/json"
+	"pkmm/models"
 )
 
 type ForumController struct {

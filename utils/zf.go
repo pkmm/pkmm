@@ -1,12 +1,10 @@
-package zf
+package utils
 
 import (
 	"bytes"
-	"crypto/md5"
-	"crypto/rand"
-	"encoding/base64"
-	"encoding/hex"
+	"errors"
 	"fmt"
+	"github.com/astaxie/beego"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 	"io"
@@ -18,8 +16,6 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
-	"errors"
-	"github.com/astaxie/beego"
 )
 
 const (
@@ -64,24 +60,8 @@ func downloadImage() (string, error) {
 	}
 	io.Copy(out, rep.Body)
 	defer out.Close()
-	beego.Debug("验证码 已经保存: %s\n", picName)
+	beego.Debug("验证码 已经保存 ", picName)
 	return picName, nil
-}
-
-//生成32位md5字串
-func GetMd5String(s string) string {
-	h := md5.New()
-	h.Write([]byte(s))
-	return hex.EncodeToString(h.Sum(nil))
-}
-
-func UniqueId() string {
-	b := make([]byte, 48)
-
-	if _, err := io.ReadFull(rand.Reader, b); err != nil {
-		return ""
-	}
-	return GetMd5String(base64.URLEncoding.EncodeToString(b))
 }
 
 func GbkToUtf8(s []byte) ([]byte, error) {
@@ -142,14 +122,23 @@ func Login(num, pwd string) ([][]string, error) {
 	if err != nil {
 		return [][]string{}, err
 	}
-	picName, err := downloadImage()
-	if err != nil {
-		return [][]string{}, err
+	//picName, err := downloadImage()
+	//if err != nil {
+	//	return [][]string{}, err
+	//}
+	//code, err := imgToString(picName)
+	//if err != nil {
+	//	return [][]string{}, err
+	//}
+
+	// 加载验证码
+	rep, err = client.Get(baseUrl + codeUrl)
+	defer rep.Body.Close()
+	if err != err {
+		return [][]string{}, errors.New("加载验证码失败")
 	}
-	code, err := imgToString(picName)
-	if err != nil {
-		return [][]string{}, err
-	}
+	code := Predict(rep.Body, false)
+
 	beego.Debug("Code is => ", code, len(code))
 	formData := url.Values{
 		VIEWSTATE:          {viewstate},

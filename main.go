@@ -3,12 +3,10 @@ package main
 import (
 	"github.com/astaxie/beego"
 	_ "github.com/go-sql-driver/mysql"
-	"pkmm/models"
-	_ "pkmm/utils"
-	_ "pkmm/routers"
 	"pkmm/controllers"
 	_ "pkmm/database/migrations"
-	"pkmm/utils"
+	"pkmm/models"
+	_ "pkmm/routers"
 )
 
 func main() {
@@ -18,7 +16,6 @@ func main() {
 
 	// 数据库迁移
 	//migration.Upgrade(0)
-	utils.Predict(true)
 	beego.Router("/", &controllers.ForumController{}, "*:GetForums")
 	beego.Router("/zf", &controllers.ZfController{})
 	beego.SetLogger("file", `{"filename":"logs/pkmm.log","level":7,"daily":true,"maxdays":20}`)

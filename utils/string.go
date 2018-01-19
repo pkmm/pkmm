@@ -2,17 +2,17 @@ package utils
 
 import (
 	"crypto/md5"
-	"fmt"
-	"path/filepath"
-	"os"
-	"github.com/astaxie/beego"
-	"strings"
-	"encoding/hex"
-	"io"
-	"encoding/base64"
 	"crypto/rand"
-	"runtime"
+	"encoding/base64"
+	"encoding/hex"
+	"fmt"
+	"github.com/astaxie/beego"
+	"io"
+	"os"
 	"path"
+	"path/filepath"
+	"runtime"
+	"strings"
 )
 
 func Md5(buf []byte) string {

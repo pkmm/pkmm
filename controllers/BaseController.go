@@ -13,9 +13,8 @@ type BaseController struct {
 	actionName     string
 }
 
-
 //开启跨域
-func (c BaseController)Prepare() {
+func (c BaseController) Prepare() {
 	c.Ctx.Output.Header("Access-Control-Allow-Origin", "*")
 }
 

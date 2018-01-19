@@ -1,10 +1,10 @@
 package models
 
 import (
-	"github.com/astaxie/beego"
 	"fmt"
-	"net/url"
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"net/url"
 )
 
 func Init() {
@@ -33,12 +33,10 @@ func Init() {
 		new(User),
 		new(Stu), new(Score))
 
-
 	if beego.AppConfig.String("runmode") == "dev" {
 		orm.Debug = true
 	}
 }
-
 
 // 方便给表加前缀
 func TableName(name string) string {

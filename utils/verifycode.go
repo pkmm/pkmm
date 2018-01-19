@@ -1,21 +1,18 @@
 package utils
 
 import (
-	"os"
+	"bufio"
+	"fmt"
 	"github.com/ewalker544/libsvm-go"
-	"path/filepath"
-	"runtime"
-	"path"
+	"image"
 	"image/gif"
 	"image/png"
-	"image"
-	"fmt"
-	"bufio"
 	"io"
+	"os"
+	"path"
+	"path/filepath"
+	"runtime"
 	"strings"
-	"net/http"
-	"io/ioutil"
-	"bytes"
 )
 
 func getSourceCodePath() string {
@@ -82,7 +79,7 @@ func loadSamples(__path string) map[string][]float64 {
 		}
 		fp, _ := os.Open(subPath)
 		imOfGif, _ := gif.Decode(fp)
-		name := string([]byte(subPath)[strings.LastIndex(subPath, "\\")+1:strings.LastIndex(subPath, ".")])
+		name := string([]byte(subPath)[strings.LastIndex(subPath, "\\")+1: strings.LastIndex(subPath, ".")])
 		subImgVector := crop(imOfGif, name)
 		for key, value := range subImgVector {
 			vector[key] = value
@@ -146,12 +143,12 @@ func localTrain() {
 	model.Dump(path.Join(getSourceCodePath(), "zf.model"))
 }
 
-func Predict(save bool) string {
-	rep, _ := http.Get("http://zfxk.zjtcm.net/CheckCode.aspx")
-	pix, _ := ioutil.ReadAll(rep.Body)
-	defer rep.Body.Close()
+func Predict(r io.Reader, save bool) string {
+	//rep, _ := http.Get("http://zfxk.zjtcm.net/CheckCode.aspx")
+	//pix, _ := ioutil.ReadAll(rep.Body)
+	//defer rep.Body.Close()
 	model := libSvm.NewModelFromFile(path.Join(getSourceCodePath(), "zf.model"))
-	im, _, _ := image.Decode(bytes.NewReader(pix))
+	im, _, _ := image.Decode(r)
 	vec := crop(im, "loc")
 	ret := make([]byte, 0)
 	x := make(map[int]float64)
@@ -164,14 +161,9 @@ func Predict(save bool) string {
 		ret = append(ret, ans)
 	}
 	if save {
-		fp, _ := os.Create(path.Join(getSourceCodePath(), string(ret) + ".png"))
-		io.Copy(fp, bytes.NewReader(pix))
+		fp, _ := os.Create(path.Join(getSourceCodePath(), string(ret)+".png"))
+		io.Copy(fp, r)
 		defer fp.Close()
 	}
 	return string(ret)
-}
-
-func main() {
-	//localTrain()
-	fmt.Println(Predict(true))
 }

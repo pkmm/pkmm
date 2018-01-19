@@ -1,8 +1,8 @@
 package models
 
 import (
-	"github.com/astaxie/beego/orm"
 	"fmt"
+	"github.com/astaxie/beego/orm"
 	"time"
 )
 

@@ -16,19 +16,16 @@ type User struct {
 
 var canShow = []string{"id", "user_name", "email", "status", "last_login", "created_at"}
 
-
 func (t *User) TableName() string {
 	return TableName("user")
 }
 
-
 func (u *User) Update(fields ...string) error {
-	if _,err:= orm.NewOrm().Update(u, fields...); err != nil {
+	if _, err := orm.NewOrm().Update(u, fields...); err != nil {
 		return err
 	}
 	return nil
 }
-
 
 func UserGetById(id string) (*User, error) {
 	u := new(User)
