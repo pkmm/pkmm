@@ -110,11 +110,11 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 		beego.Debug("没有学生数据")
 	}
 	beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%d位同学需要同步", num))
-	for i, st := range stus {
-		go func(__stu *models.Stu, indx int) {
+	for indx, __stu := range stus {
+		//go func(__stu *models.Stu, indx int) {
 			beego.Debug("开始登陆, 序号: ", indx, __stu.Num, __stu.Pwd)
 			scores := make([][]string, 0)
-			// 登陆尝试三次
+			// 登陆尝试
 			retry := 20
 			for try := 0; try < retry; try++ {
 				scores, err = Login(__stu.Num, __stu.Pwd)
@@ -144,7 +144,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 					beego.Debug("插入数据到db发生错误 : num = " + __stu.Num)
 				}
 			}
-		}(st, i)
+		//}(st, i)
 	}
 	return nil
 })
