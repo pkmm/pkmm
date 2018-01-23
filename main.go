@@ -17,7 +17,10 @@ func main() {
 	// 数据库迁移
 	//migration.Upgrade(0)
 	beego.Router("/", &controllers.ForumController{}, "*:GetForums")
-	beego.Router("/zf", &controllers.ZfController{})
+	beego.Router("/zf", &controllers.ZfController{}, "*:GetScore")
+	beego.Router("/zf/check_account", &controllers.ZfController{}, "*:CheckAccount")
+	beego.Router("/zf/update_account", &controllers.ZfController{}, "post:UpdateAccount")
+
 	beego.SetLogger("file", `{"filename":"logs/pkmm.log","level":7,"daily":true,"maxdays":20}`)
 	beego.Run()
 }

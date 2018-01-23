@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"errors"
 )
 
 func getSourceCodePath() string {
@@ -143,12 +144,15 @@ func localTrain() {
 	model.Dump(path.Join(getSourceCodePath(), "zf.model"))
 }
 
-func Predict(r io.Reader, save bool) string {
+func Predict(r io.Reader, save bool) (string, error) {
 	//rep, _ := http.Get("http://zfxk.zjtcm.net/CheckCode.aspx")
 	//pix, _ := ioutil.ReadAll(rep.Body)
 	//defer rep.Body.Close()
 	model := libSvm.NewModelFromFile(path.Join(getSourceCodePath(), "zf.model"))
-	im, _, _ := image.Decode(r)
+	im, err := gif.Decode(r)
+	if err != nil {
+		return "", errors.New("解码验证码失败")
+	}
 	vec := crop(im, "loc")
 	ret := make([]byte, 0)
 	x := make(map[int]float64)
@@ -162,8 +166,8 @@ func Predict(r io.Reader, save bool) string {
 	}
 	if save {
 		fp, _ := os.Create(path.Join(getSourceCodePath(), string(ret)+".png"))
-		io.Copy(fp, r)
+		gif.Encode(fp, im, nil)
 		defer fp.Close()
 	}
-	return string(ret)
+	return string(ret), nil
 }

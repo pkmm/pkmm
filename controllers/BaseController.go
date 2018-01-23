@@ -24,3 +24,6 @@ func (this *BaseController) jsonResult(out interface{}) {
 	this.ServeJSON()
 	this.StopRun()
 }
+
+// {msg_status:ok/false, response: ... }
+//

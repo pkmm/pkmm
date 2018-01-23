@@ -20,23 +20,8 @@ type Score struct {
 	Xq        string
 }
 
-func InsertScores(scores [][]string, stuId int64) (int64, error) {
-	s := make([]*Score, 0)
-	var count = 0
-	for _, row := range scores {
-		ts := &Score{StuId: stuId, CreatedAt: time.Now()}
-		ts.Xn = row[0]
-		ts.Xq = row[1]
-		ts.Kcmc = row[2]
-		ts.Xf = row[3]
-		ts.Jd = row[4]
-		ts.Cj = row[5]
-		ts.Bkcj = row[6]
-		ts.Cxcj = row[7]
-		s = append(s, ts)
-		count++
-	}
-	successNum, err := orm.NewOrm().InsertMulti(count, s)
+func InsertScores(scores []Score) (int64, error) {
+	successNum, err := orm.NewOrm().InsertMulti(len(scores), scores)
 	return successNum, err
 }
 

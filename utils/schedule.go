@@ -97,7 +97,7 @@ var signForums = toolbox.NewTask("sign", "0 0 0 * * *", func() error {
 	return nil
 })
 
-var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func() error {
+var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", func() error {
 	// todo chunk result
 	o := orm.NewOrm()
 	var stus []*models.Stu
@@ -110,41 +110,31 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 0 * * * *", func(
 		beego.Debug("没有学生数据")
 	}
 	beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%d位同学需要同步", num))
-	for indx, __stu := range stus {
-		//go func(__stu *models.Stu, indx int) {
-			beego.Debug("开始登陆, 序号: ", indx, __stu.Num, __stu.Pwd)
-			scores := make([][]string, 0)
+	for indx, stu := range stus {
+		go func(stu *models.Stu, indx int) {
+			beego.Debug("开始登陆, 序号: ", indx, stu.Num, stu.Pwd)
+			var scores []models.Score
 			// 登陆尝试
-			retry := 20
+			retry := 3
 			for try := 0; try < retry; try++ {
-				scores, err = Login(__stu.Num, __stu.Pwd)
+				scores, err = Login(stu.Num, stu.Pwd)
 				if err != nil {
-					beego.Debug("第", try, "登陆", __stu.Num, "登陆发生错误", err)
+					beego.Debug("第", try, "登陆", stu.Num, "登陆发生错误", err)
 				} else {
 					break
 				}
-				beego.Debug(fmt.Sprintf("第 %d 次尝试登陆 %s 的账号.", try, __stu.Num))
+				beego.Debug(fmt.Sprintf("第 %d 次尝试登陆 %s 的账号.", try, stu.Num))
 			}
-			beego.Debug(__stu.Num, "成绩的个数", len(scores))
+			beego.Debug(stu.Num, "成绩的个数", len(scores))
 			if len(scores) > 1 {
-				beego.Debug("开始更新 ", __stu.Num, "的成绩，共计 ", len(scores))
-				for _, row := range scores {
-					ts := &models.Score{StuId: __stu.Id, CreatedAt: time.Now()}
-					ts.Xn = row[0]
-					ts.Xq = row[1]
-					ts.Kcmc = row[2]
-					ts.Xf = row[3]
-					ts.Jd = row[4]
-					ts.Cj = row[5]
-					ts.Bkcj = row[6]
-					ts.Cxcj = row[7]
-					models.InsertOrUpdateScore(ts)
-				}
-				if err != nil {
-					beego.Debug("插入数据到db发生错误 : num = " + __stu.Num)
+				beego.Debug("开始更新 ", stu.Num, "的成绩，共计 ", len(scores))
+				for _, score := range scores {
+					score.StuId = stu.Id
+					score.CreatedAt = time.Now()
+					models.InsertOrUpdateScore(&score)
 				}
 			}
-		//}(st, i)
+		}(stu, indx)
 	}
 	return nil
 })
