@@ -179,7 +179,6 @@ func GetMainPage(num, pwd string) (string, error) {
 	return string(tt), nil
 }
 
-
 func ValidAccount(num, pwd string) (bool, string) {
 	html, err := GetMainPage(num, pwd)
 	if err != nil {
@@ -225,7 +224,7 @@ func Login(num, pwd string) ([]models.Score, error) {
 	}
 	code, _ := Predict(rep.Body, false)
 
-	beego.Debug("num", num, "Code is => ", code, len(code))
+	//	beego.Debug("num", num, "Code is => ", code, len(code))
 	formData := url.Values{
 		VIEWSTATE:          {viewstate},
 		"txtUserName":      {num},
