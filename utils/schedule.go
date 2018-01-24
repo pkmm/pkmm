@@ -113,7 +113,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 	size := 20 // 并发数
 	done := make(chan string, size)
 	for indx, stu := range stus {
-		go func(stu *models.Stu, indx int) {
+		go func(stu *models.Stu, indx int, done chan string) {
 			//beego.Debug("开始登陆, 序号: ", indx, stu.Num, stu.Pwd)
 			var scores []models.Score
 			// 登陆尝试
@@ -136,7 +136,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 					models.InsertOrUpdateScore(&score)
 				}
 			}
-		}(stu, indx)
+		}(stu, indx, done)
 	}
 	for i := 0; i < size; i++ {
 		ret := <-done
