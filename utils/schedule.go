@@ -110,24 +110,26 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 		beego.Debug("没有学生数据")
 	}
 	beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%d位同学需要同步", num))
+	size := 20 // 并发数
+	done := make(chan string, size)
 	for indx, stu := range stus {
 		go func(stu *models.Stu, indx int) {
-			beego.Debug("开始登陆, 序号: ", indx, stu.Num, stu.Pwd)
+			//beego.Debug("开始登陆, 序号: ", indx, stu.Num, stu.Pwd)
 			var scores []models.Score
 			// 登陆尝试
 			retry := 3
 			for try := 0; try < retry; try++ {
 				scores, err = Login(stu.Num, stu.Pwd)
 				if err != nil {
-					beego.Debug("第", try, "登陆", stu.Num, "登陆发生错误", err)
+					//beego.Debug("第", try, "登陆", stu.Num, "登陆发生错误", err)
 				} else {
 					break
 				}
-				beego.Debug(fmt.Sprintf("第 %d 次尝试登陆 %s 的账号.", try, stu.Num))
 			}
-			beego.Debug(stu.Num, "成绩的个数", len(scores))
+			//beego.Debug(stu.Num, "成绩的个数", len(scores))
+			done <- fmt.Sprintf("[%s %s] 更新的成绩: %d", stu.Num, stu.Pwd, len(scores))
 			if len(scores) > 1 {
-				beego.Debug("开始更新 ", stu.Num, "的成绩，共计 ", len(scores))
+				//beego.Debug("开始更新 ", stu.Num, "的成绩，共计 ", len(scores))
 				for _, score := range scores {
 					score.StuId = stu.Id
 					score.CreatedAt = time.Now()
@@ -135,6 +137,10 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 				}
 			}
 		}(stu, indx)
+	}
+	for i := 0; i < size; i++ {
+		ret := <-done
+		beego.Debug(ret)
 	}
 	return nil
 })
