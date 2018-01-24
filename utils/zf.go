@@ -25,16 +25,6 @@ const (
 	VIEWSTATE = "__VIEWSTATE"
 )
 
-var client *http.Client
-var cookieJar *cookiejar.Jar
-
-func init() {
-	cookieJar, _ = cookiejar.New(nil)
-	client = &http.Client{
-		Jar: cookieJar,
-	}
-}
-
 func getViewState(html []byte) (string, error) {
 	pattern, _ := regexp.Compile(`<input type="hidden" name="__VIEWSTATE" value="(.*?)" />`)
 	viewstate := pattern.FindSubmatch(html)
@@ -87,8 +77,8 @@ func retrieveScores(fileContent []byte) []models.Score {
 }
 
 // 1. 打开登陆页
-func openLoginPage() (string, error) {
-	rep, err := client.Get(baseUrl)
+func (this *Crawl) openLoginPage() (string, error) {
+	rep, err := this.Client.Get(baseUrl)
 	defer rep.Body.Close()
 	if err != nil {
 		return "", errors.New("获取登陆页面失败")
@@ -105,8 +95,8 @@ func openLoginPage() (string, error) {
 }
 
 // 2. 获取验证码
-func getCode() (string, error) {
-	rep, err := client.Get(baseUrl + codeUrl)
+func (this *Crawl) getCode() (string, error) {
+	rep, err := this.Client.Get(baseUrl + codeUrl)
 	defer rep.Body.Close()
 	if err != err {
 		return "", errors.New("加载验证码失败")
@@ -119,21 +109,21 @@ func getCode() (string, error) {
 }
 
 // 3. 登陆后的主页
-func GetMainPage(num, pwd string) (string, error) {
-	viewstate, err := openLoginPage()
+func (this *Crawl) GetMainPage() (string, error) {
+	viewstate, err := this.openLoginPage()
 	if err != nil {
 		return "", err
 	}
-	code, err := getCode()
+	code, err := this.getCode()
 	if err != nil {
 		return "", err
 	}
-	beego.Debug("num", num, "Code is => ", code, len(code))
+	beego.Debug("num", this.Num, "Code is => ", code, len(code))
 	formData := url.Values{
 		VIEWSTATE:          {viewstate},
-		"txtUserName":      {num},
+		"txtUserName":      {this.Num},
 		"Textbox1":         {""},
-		"TextBox2":         {pwd},
+		"TextBox2":         {this.Pwd},
 		"txtSecretCode":    {code},
 		"RadioButtonList1": {"%D1%A7%C9%FA"},
 		"Button1":          {""},
@@ -142,7 +132,7 @@ func GetMainPage(num, pwd string) (string, error) {
 		"hidsc":            {""},
 	}
 	beego.Debug(formData.Encode())
-	rep, err := client.PostForm(baseUrl+loginUrl, formData)
+	rep, err := this.Client.PostForm(baseUrl+loginUrl, formData)
 	defer rep.Body.Close()
 	if err != nil {
 		return "", err
@@ -159,7 +149,8 @@ func GetMainPage(num, pwd string) (string, error) {
 }
 
 func ValidAccount(num, pwd string) (bool, string) {
-	html, err := GetMainPage(num, pwd)
+	crawl := NewCrawl(num, pwd)
+	html, err := crawl.GetMainPage()
 	if err != nil {
 		return false, err.Error()
 	} else {
