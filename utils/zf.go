@@ -247,8 +247,8 @@ func Login(num, pwd string) ([]models.Score, error) {
 		return scores, err
 	}
 	defer rep.Body.Close()
-	//tt,_ := GbkToUtf8(html)
-	//fmt.Println(string(tt))
+	tt, _ := GbkToUtf8(html)
+	beego.Debug(string(tt))
 
 	r, err := http.NewRequest(GET, "http://zfxk.zjtcm.net/xscj_gc.aspx?xh="+num+"&xm=%D5%C5%B4%AB%B3%C9&gnmkdm=N121605", nil)
 	if err != nil {
