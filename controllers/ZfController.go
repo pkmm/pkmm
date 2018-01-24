@@ -25,7 +25,8 @@ func (this *ZfController) GetScore() {
 		}
 	}
 	// 新来的， 需要添加
-	scores, _ := utils.Login(num, pwd)
+	crawl := utils.NewCrawl(num, pwd)
+	scores, _ := crawl.Login()
 	if len(scores) != 0 && stu.Id != 0 {
 		preInsertScores := make([]models.Score, 0)
 		for _, score := range scores {

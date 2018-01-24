@@ -3,17 +3,13 @@ package utils
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"github.com/astaxie/beego"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
-	"os"
-	"os/exec"
 	"regexp"
 	"strings"
 	"pkmm/models"
@@ -46,23 +42,6 @@ func getViewState(html []byte) (string, error) {
 		return string(viewstate[1]), nil
 	}
 	return "", errors.New("解析 viewstate 失败")
-}
-
-func downloadImage() (string, error) {
-	var err error
-	rep, err := client.Get(baseUrl + codeUrl)
-	if err != nil {
-		return "", err
-	}
-	picName := UniqueId() + ".png"
-	out, err := os.Create("/root/gopath/src/pkmm/utils/zf/verifyCode/" + picName)
-	if err != nil {
-		return "", err
-	}
-	io.Copy(out, rep.Body)
-	defer out.Close()
-	beego.Debug("验证码 已经保存 ", picName)
-	return picName, nil
 }
 
 func GbkToUtf8(s []byte) ([]byte, error) {
@@ -200,14 +179,27 @@ func ValidAccount(num, pwd string) (bool, string) {
 	}
 }
 
-func Login(num, pwd string) ([]models.Score, error) {
-	cookieJar, _ = cookiejar.New(nil)
-	client = &http.Client{
-		Jar: cookieJar,
+type Crawl struct {
+	Client *http.Client
+	Num    string
+	Pwd    string
+}
+
+func NewCrawl(num, pwd string) *Crawl {
+	crawl := &Crawl{}
+	tmpJar, _ := cookiejar.New(nil)
+	crawl.Client = &http.Client{
+		Jar: tmpJar,
 	}
+	crawl.Num = num
+	crawl.Pwd = pwd
+	return crawl
+}
+
+func (this *Crawl) Login() ([]models.Score, error) {
 	var err error
 	var scores []models.Score
-	rep, err := client.Get(baseUrl)
+	rep, err := this.Client.Get(baseUrl)
 	if err != nil {
 		return scores, err
 	}
@@ -221,7 +213,7 @@ func Login(num, pwd string) ([]models.Score, error) {
 	}
 
 	// 加载验证码
-	rep, err = client.Get(baseUrl + codeUrl)
+	rep, err = this.Client.Get(baseUrl + codeUrl)
 	defer rep.Body.Close()
 	if err != err {
 		return scores, errors.New("加载验证码失败")
@@ -231,9 +223,9 @@ func Login(num, pwd string) ([]models.Score, error) {
 	//	beego.Debug("num", num, "Code is => ", code, len(code))
 	formData := url.Values{
 		VIEWSTATE:          {viewstate},
-		"txtUserName":      {num},
+		"txtUserName":      {this.Num},
 		"Textbox1":         {""},
-		"TextBox2":         {pwd},
+		"TextBox2":         {this.Pwd},
 		"txtSecretCode":    {code},
 		"RadioButtonList1": {"%D1%A7%C9%FA"},
 		"Button1":          {""},
@@ -241,8 +233,8 @@ func Login(num, pwd string) ([]models.Score, error) {
 		"hidPdrs":          {""},
 		"hidsc":            {""},
 	}
-	fmt.Println(formData.Encode())
-	rep, err = client.PostForm(baseUrl+loginUrl, formData)
+	//fmt.Println(formData.Encode())
+	rep, err = this.Client.PostForm(baseUrl+loginUrl, formData)
 	if err != nil {
 		return scores, err
 	}
@@ -254,12 +246,12 @@ func Login(num, pwd string) ([]models.Score, error) {
 	//tt, _ := GbkToUtf8(html)
 	//beego.Debug(string(tt))
 
-	r, err := http.NewRequest(GET, "http://zfxk.zjtcm.net/xscj_gc.aspx?xh="+num+"&xm=%D5%C5%B4%AB%B3%C9&gnmkdm=N121605", nil)
+	r, err := http.NewRequest(GET, "http://zfxk.zjtcm.net/xscj_gc.aspx?xh="+this.Num+"&xm=%D5%C5%B4%AB%B3%C9&gnmkdm=N121605", nil)
 	if err != nil {
 		return scores, err
 	}
-	r.Header.Set("Referer", "http://zfxk.zjtcm.net/xs_main.aspx?xh="+num)
-	rep, err = client.Do(r)
+	r.Header.Set("Referer", "http://zfxk.zjtcm.net/xs_main.aspx?xh="+this.Num)
+	rep, err = this.Client.Do(r)
 	if err != nil {
 		//fmt.Println(err)
 		return scores, err
@@ -288,17 +280,17 @@ func Login(num, pwd string) ([]models.Score, error) {
 	formData.Set("Button2", "%D4%DA%D0%A3%D1%A7%CF%B0%B3%C9%BC%A8%B2%E9%D1%AF")
 
 	r, err = http.NewRequest(POST,
-		"http://zfxk.zjtcm.net/xscj_gc.aspx?xh="+num+"&xm=%D5%C5%B4%AB%B3%C9&gnmkdm=N121605",
+		"http://zfxk.zjtcm.net/xscj_gc.aspx?xh="+this.Num+"&xm=%D5%C5%B4%AB%B3%C9&gnmkdm=N121605",
 		strings.NewReader(formData.Encode()))
 	if err != nil {
 		return scores, err
 	}
-	r.Header.Set("Referer", "http://zfxk.zjtcm.net/xs_main.aspx?xh="+num)
+	r.Header.Set("Referer", "http://zfxk.zjtcm.net/xs_main.aspx?xh="+this.Num)
 	r.Header.Set("Host", "zfxk.zjtcm.net")
 	r.Header.Set("Content-Type", "application/x-www-form-urlencoded") // 很重要
-	rep, err = client.Do(r)
+	rep, err = this.Client.Do(r)
 	if err != nil {
-		fmt.Println(err)
+		return scores, err
 	}
 	html, err = ioutil.ReadAll(rep.Body)
 	if err != nil {
@@ -317,19 +309,4 @@ func Login(num, pwd string) ([]models.Score, error) {
 
 	return retrieveScores(utf8Html), nil
 
-}
-
-// 通过图片的路径去取图片然后识别验证码（python识别代码实现） //已经废弃
-func imgToString(imageFilePath string) (string, error) {
-	ans, err := exec.Command("/usr/bin/python", "/root/gopath/src/pkmm/utils/zf/verifyCode/test.py", imageFilePath).Output()
-	//fmt.Println("decode verify code:", err)
-	beego.Debug(string(ans))
-	if err != nil {
-		return "", errors.New("识别验证码失败")
-	}
-	rs := string(ans)
-	return rs[:4], nil
-}
-func main() {
-	Login("201312203501029", "520asd")
 }

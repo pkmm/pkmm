@@ -118,8 +118,9 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 			var scores []models.Score
 			// 登陆尝试
 			retry := 3
+			crawl := NewCrawl(stu.Num, stu.Pwd)
 			for try := 0; try < retry; try++ {
-				scores, err = Login(stu.Num, stu.Pwd)
+				scores, err = crawl.Login()
 				if err != nil {
 					beego.Debug("第", try, "登陆", stu.Num, "登陆发生错误", err)
 				} else {
