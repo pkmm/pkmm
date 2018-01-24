@@ -121,7 +121,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 			for try := 0; try < retry; try++ {
 				scores, err = Login(stu.Num, stu.Pwd)
 				if err != nil {
-					//beego.Debug("第", try, "登陆", stu.Num, "登陆发生错误", err)
+					beego.Debug("第", try, "登陆", stu.Num, "登陆发生错误", err)
 				} else {
 					break
 				}
