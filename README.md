@@ -1,1 +1,8 @@
-##### auto sign baidu tieba power by beego
+Learn Golang programming
+=
+
+Beego-based framework
+-
+* Tieba auto sign. 
+* Recognize code.
+* Login zhenfang system, retrieve scores.
