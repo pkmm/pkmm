@@ -9,6 +9,7 @@ import (
 	"pkmm/models"
 	"strconv"
 	"time"
+	"runtime"
 )
 
 // 初始化函数
@@ -110,9 +111,10 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 		beego.Debug("没有学生数据")
 	}
 	beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%d位同学需要同步", num))
-	size := 3 // 并发数
+	size := 20 // 并发数
 	done := make(chan string, size)
 	defer close(done)
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	for indx, stu := range stus {
 		go func(stu *models.Stu, indx int, done chan string) {
 			//beego.Debug("开始登陆, 序号: ", indx, stu.Num, stu.Pwd)
