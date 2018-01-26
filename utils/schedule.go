@@ -9,7 +9,6 @@ import (
 	"pkmm/models"
 	"strconv"
 	"time"
-	"runtime"
 )
 
 // 初始化函数
@@ -111,40 +110,85 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 		beego.Debug("没有学生数据")
 	}
 	beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%d位同学需要同步", num))
-	size := 20 // 并发数
-	done := make(chan string, size)
-	defer close(done)
-	runtime.GOMAXPROCS(runtime.NumCPU())
-	for indx, stu := range stus {
-		go func(stu *models.Stu, indx int, done chan string) {
-			//beego.Debug("开始登陆, 序号: ", indx, stu.Num, stu.Pwd)
-			var scores []models.Score
-			// 登陆尝试
-			retry := 3
-			crawl := NewCrawl(stu.Num, stu.Pwd)
-			for try := 0; try < retry; try++ {
-				scores, err = crawl.Login()
-				if err != nil {
-					//beego.Debug("第", try, "登陆", stu.Num, "登陆发生错误", err)
-				} else {
-					break
+
+	totalCount := len(stus) // 总共的任务数量
+	goroutine := 10         // 并发的数量
+	chResStu := make(chan string, goroutine)
+	chReqStu := make(chan models.Stu, totalCount)
+
+	// worker
+	for i := 0; i < goroutine; i++ {
+		go func() {
+			for {
+				stu := <-chReqStu
+				var scores []models.Score
+				// 登陆尝试
+				retry := 3
+				crawl := NewCrawl(stu.Num, stu.Pwd)
+				for try := 0; try < retry; try++ {
+					scores, err = crawl.Login()
+					if err != nil {
+						// todo
+					} else {
+						break
+					}
+				}
+				chResStu <- fmt.Sprintf("[%s %s] 更新的成绩: %d", stu.Num, stu.Pwd, len(scores))
+				if len(scores) > 1 {
+					for _, score := range scores {
+						score.StuId = stu.Id
+						score.CreatedAt = time.Now()
+						models.InsertOrUpdateScore(&score)
+					}
 				}
 			}
-			//beego.Debug(stu.Num, "成绩的个数", len(scores))
-			done <- fmt.Sprintf("[%s %s] 更新的成绩: %d", stu.Num, stu.Pwd, len(scores))
-			if len(scores) > 1 {
-				//beego.Debug("开始更新 ", stu.Num, "的成绩，共计 ", len(scores))
-				for _, score := range scores {
-					score.StuId = stu.Id
-					score.CreatedAt = time.Now()
-					models.InsertOrUpdateScore(&score)
-				}
-			}
-		}(stu, indx, done)
+		}()
 	}
-	for ret := range done {
-		beego.Debug(ret)
+
+	// productor
+
+	go func() {
+		for _, stu := range stus {
+			chReqStu <- *stu
+		}
+	}()
+
+
+	for i:=0; i< totalCount; i++ {
+		beego.Debug(<-chResStu)
 	}
+
+	//runtime.GOMAXPROCS(runtime.NumCPU())
+	//for indx, stu := range stus {
+	//	go func(stu *models.Stu, indx int, done chan string) {
+	//		//beego.Debug("开始登陆, 序号: ", indx, stu.Num, stu.Pwd)
+	//		var scores []models.Score
+	//		// 登陆尝试
+	//		retry := 3
+	//		crawl := NewCrawl(stu.Num, stu.Pwd)
+	//		for try := 0; try < retry; try++ {
+	//			scores, err = crawl.Login()
+	//			if err != nil {
+	//				//beego.Debug("第", try, "登陆", stu.Num, "登陆发生错误", err)
+	//			} else {
+	//				break
+	//			}
+	//		}
+	//		//beego.Debug(stu.Num, "成绩的个数", len(scores))
+	//		done <- fmt.Sprintf("[%s %s] 更新的成绩: %d", stu.Num, stu.Pwd, len(scores))
+	//		if len(scores) > 1 {
+	//			//beego.Debug("开始更新 ", stu.Num, "的成绩，共计 ", len(scores))
+	//			for _, score := range scores {
+	//				score.StuId = stu.Id
+	//				score.CreatedAt = time.Now()
+	//				models.InsertOrUpdateScore(&score)
+	//			}
+	//		}
+	//	}(stu, indx, done)
+	//}
+	//for ret := range done {
+	//	beego.Debug(ret)
+	//}
 
 	return nil
 })
