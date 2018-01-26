@@ -9,6 +9,7 @@ import (
 	"pkmm/models"
 	"strconv"
 	"time"
+	"runtime"
 )
 
 // 初始化函数
@@ -143,5 +144,6 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 		ret := <-done
 		beego.Debug(ret)
 	}
+	runtime.GC()
 	return nil
 })
