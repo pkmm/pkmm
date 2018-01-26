@@ -120,7 +120,10 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 	for i := 0; i < goroutine; i++ {
 		go func() {
 			for {
+				// 获取任务
 				stu := <-chReqStu
+
+				// 一下是任务的核心处理
 				var scores []models.Score
 				// 登陆尝试
 				retry := 3
@@ -133,7 +136,6 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 						break
 					}
 				}
-				chResStu <- fmt.Sprintf("[%s %s] 更新的成绩: %d", stu.Num, stu.Pwd, len(scores))
 				if len(scores) > 1 {
 					for _, score := range scores {
 						score.StuId = stu.Id
@@ -141,6 +143,9 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 						models.InsertOrUpdateScore(&score)
 					}
 				}
+
+				// I写输出
+				chResStu <- fmt.Sprintf("[%s %s] 更新的成绩: %d", stu.Num, stu.Pwd, len(scores))
 			}
 		}()
 	}
