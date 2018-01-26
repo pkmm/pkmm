@@ -144,6 +144,6 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 		ret := <-done
 		beego.Debug(ret)
 	}
-	runtime.GC()
+	close(done)
 	return nil
 })
