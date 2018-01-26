@@ -110,7 +110,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 		beego.Debug("没有学生数据")
 	}
 	beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%d位同学需要同步", num))
-	size := 10 // 并发数
+	size := 3 // 并发数
 	done := make(chan string, size)
 	defer close(done)
 	for indx, stu := range stus {
@@ -140,9 +140,9 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 			}
 		}(stu, indx, done)
 	}
-	for i := 0; i < size; i++ {
-		ret := <-done
+	for ret := range done {
 		beego.Debug(ret)
 	}
+
 	return nil
 })
