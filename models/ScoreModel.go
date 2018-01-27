@@ -9,6 +9,7 @@ import (
 type Score struct {
 	Id        int64
 	Kcmc      string
+	Type      string
 	Cj        string
 	Cxcj      string
 	Bkcj      string
@@ -25,16 +26,21 @@ func InsertScores(scores []Score) (int64, error) {
 	return successNum, err
 }
 
-func GetScoresByStuId(stuId int64) []*Score {
-	scores := make([]*Score, 0)
+func GetScoresByStuId(stuId int64) []Score {
+	scores := make([]Score, 0)
 	orm.NewOrm().QueryTable("score").Filter("stu_id", stuId).All(&scores)
 	return scores
 }
 
 func InsertOrUpdateScore(score *Score) {
 	o := orm.NewOrm()
-	cnt, _ := o.QueryTable("score").Filter("xn", score.Xn).
-		Filter("xq", score.Xq).Filter("kcmc", score.Kcmc).Filter("stu_id", score.StuId).Count()
+	cnt, _ := o.QueryTable("score").
+		Filter("xn", score.Xn).
+		Filter("xq", score.Xq).
+		Filter("kcmc", score.Kcmc).
+		Filter("type", score.Type).
+		Filter("stu_id", score.StuId).
+		Count()
 	if cnt != 0 {
 		return
 	}
