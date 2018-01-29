@@ -164,6 +164,11 @@ func ValidAccount(num, pwd string) (bool, string) {
 			if result != "" {
 				return false, "密码错误"
 			} else {
+				reg = regexp.MustCompile("用户名不存在或未按照要求参加教学活动")
+				result = reg.FindString(html)
+				if result != "" {
+					return false, "用户名不存在或未按照要求参加教学活动"
+				}
 				return true, ""
 			}
 		}
