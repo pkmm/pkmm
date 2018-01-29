@@ -52,7 +52,7 @@ func retrieveScores(fileContent []byte) []models.Score {
 	}
 	table := ret[0]
 	// <td>学年</td><td>学期</td><td>课程代码</td><td>课程名称</td><td>课程性质</td><td>课程归属</td><td>学分</td><td>绩点</td><td>成绩</td><td>辅修标记</td><td>补考成绩</td><td>重修成绩</td><td>学院名称</td><td>备注</td><td>重修标记</td><td>课程英文名称</td>
-	pattern = regexp.MustCompile(`(?s)<td>(.*?)</td><td>(.*?)</td><td>.*?</td><td>(.*?)</td><td>.*?</td><td>.*?</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>.*?</td><td>(.*?)</td><td>(.*?)</td><td>.*?</td><td>.*?</td><td>.*?</td><td>.*?</td>`)
+	pattern = regexp.MustCompile(`(?s)<td>(.*?)</td><td>(.*?)</td><td>.*?</td><td>(.*?)</td><td>(.*?)</td><td>.*?</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>.*?</td><td>(.*?)</td><td>(.*?)</td><td>.*?</td><td>.*?</td><td>.*?</td><td>.*?</td>`)
 	tds := pattern.FindAllSubmatch(table, -1)
 
 	var scores []models.Score
@@ -64,11 +64,12 @@ func retrieveScores(fileContent []byte) []models.Score {
 			Xn:   string(row[1]),
 			Xq:   string(row[2]),
 			Kcmc: string(row[3]),
-			Xf:   string(row[4]),
-			Jd:   string(row[5]),
-			Cj:   string(row[6]),
-			Bkcj: string(row[7]),
-			Cxcj: string(row[8]),
+			Type: string(row[4]),
+			Xf:   string(row[5]),
+			Jd:   string(row[6]),
+			Cj:   string(row[7]),
+			Bkcj: string(row[8]),
+			Cxcj: string(row[9]),
 		}
 		scores = append(scores, score)
 	}
