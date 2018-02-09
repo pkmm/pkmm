@@ -116,7 +116,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 	chResStu := make(chan string, goroutine)
 	chReqStu := make(chan models.Stu, totalCount)
 
-	// worker 20个worker 等待工作的到来
+	// worker 10个worker 等待工作的到来
 	for i := 0; i < goroutine; i++ {
 		go func() {
 			for {
