@@ -112,7 +112,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 	//beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%d位同学需要同步", num))
 
 	totalCount := len(stus) // 总共的任务数量, 否则会直接把500M的内存直接跑满。现在基本上24%的内存
-	goroutine := 10          // 并发的数量
+	goroutine := 10         // 并发的数量
 	chResStu := make(chan string, goroutine)
 	chReqStu := make(chan models.Stu, totalCount)
 
@@ -160,7 +160,8 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 	}()
 
 	for i := 0; i < totalCount; i++ {
-		beego.Debug(<-chResStu)
+		//beego.Debug(<-chResStu)
+		<-chResStu // ignore value.
 	}
 
 	return nil
