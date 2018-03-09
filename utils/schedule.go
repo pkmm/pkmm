@@ -9,6 +9,7 @@ import (
 	"pkmm/models"
 	"strconv"
 	"time"
+	"encoding/json"
 )
 
 // 初始化函数
@@ -22,6 +23,17 @@ func init() {
 type ChannelData struct {
 	Kw  string
 	Fid string
+}
+
+type ReplyJson struct {
+	Ctime      string      `json:"ctime"`
+	ErrorCode  string      `json:"error_code"`
+	ErrorMsg   string      `json:"error_msg"`
+	Info       []string    `json:"info"`
+	Logid      string      `json:"logid"`
+	ServerTime string      `json:"server_time"`
+	Time       string      `json:"time"`
+	UserInfo   interface{} `json:"user_info"`
 }
 
 var syncUsersForumsFromOfficial = toolbox.NewTask("syncUsersForumsFromOfficial", "0 0 23 * * *", func() error {
@@ -86,10 +98,16 @@ var signForums = toolbox.NewTask("sign", "0 0 0 * * *", func() error {
 			}
 			ret := w.SignAll(&forumList)
 			for kw, reply := range *ret {
+				replyJson := ReplyJson{}
+				json.Unmarshal([]byte(reply), &replyJson)
+				hasError := true
+				if replyJson.ErrorCode == "0" || replyJson.ErrorCode == "160002"{
+					hasError = false
+				}
 				orm.NewOrm().QueryTable(models.TableName("forums")).
 					Filter("user_id", user.Id).
 					Filter("kw", kw).
-					Update(orm.Params{"reply_json": reply, "last_sign": time.Now().Day()})
+					Update(orm.Params{"reply_json": reply, "last_sign": time.Now().Day(), "sign_status": hasError})
 			}
 		}(user)
 	}

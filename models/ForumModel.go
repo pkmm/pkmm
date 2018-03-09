@@ -42,6 +42,7 @@ func NeedSignForumsByUserId(userId int) ([]*Forum, int64) {
 		Exclude("last_sign", time.Now().Day()).
 		Filter("user_id", userId).
 		Filter("is_deleted", 0).
+		Filter("sign_status", 1).
 		Exclude("fid", -1).
 		All(&forums)
 	if err != nil {

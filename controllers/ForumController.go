@@ -19,6 +19,7 @@ type ReplyJson struct {
 	Time       string      `json:"time"`
 	UserInfo   interface{} `json:"user_info"`
 }
+
 type ResponseJson struct {
 	Id        int
 	Kw        string
