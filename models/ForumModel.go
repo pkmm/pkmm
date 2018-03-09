@@ -42,8 +42,21 @@ func NeedSignForumsByUserId(userId int) ([]*Forum, int64) {
 		Exclude("last_sign", time.Now().Day()).
 		Filter("user_id", userId).
 		Filter("is_deleted", 0).
-		Filter("sign_status", 1).
 		Exclude("fid", -1).
+		All(&forums)
+	if err != nil {
+		return nil, 0
+	}
+	return forums, total
+}
+
+func GetSignFailureForums(userId int) ([]*Forum, int64) {
+	forums := make([]*Forum, 0)
+	total, err := orm.NewOrm().QueryTable(TableName("forums")).
+		Filter("user_id", userId).
+		Filter("is_deleted", 0).
+		Exclude("fid", -1).
+		Filter("sign_status", 1).
 		All(&forums)
 	if err != nil {
 		return nil, 0

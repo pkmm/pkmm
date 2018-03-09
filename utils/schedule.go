@@ -17,6 +17,7 @@ func init() {
 	toolbox.AddTask("syncUsersForumsFromOfficial", syncUsersForumsFromOfficial)
 	toolbox.AddTask("sign", signForums)
 	toolbox.AddTask("sync_score_from_zcmu", syncScoreFromZcmu)
+	toolbox.AddTask("re_sign", reSignForums)
 }
 
 // goroutine 通信数据机构
@@ -79,6 +80,62 @@ var syncUsersForumsFromOfficial = toolbox.NewTask("syncUsersForumsFromOfficial",
 	return nil
 })
 
+var reSignForums = toolbox.NewTask("re_sign", "0 30 */1 * * *", func() error {
+	// TODO: chunk data.
+	users, totalTaskCount, err := models.GetAllUsers()
+	if totalTaskCount == 0 {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+
+	goroutine := 2
+	taskOut := make(chan string, goroutine)
+	taskIn := make(chan models.User, totalTaskCount)
+
+	for i := 0; i < goroutine; i++ {
+		go func() {
+			for {
+				user := <-taskIn
+				forums, _ := models.GetSignFailureForums(user.Id)
+				w := baidu.NewForumWorker(user.Bduss)
+				forumList := baidu.ForumList{}
+				for _, forum := range forums {
+					forumList = append(forumList, baidu.Forum{Kw: forum.Kw, Fid: strconv.Itoa(forum.Fid)})
+				}
+				ret := w.SignAll(&forumList)
+				for kw, reply := range *ret {
+					replyJson := ReplyJson{}
+					json.Unmarshal([]byte(reply), &replyJson)
+					hasError := true
+					if replyJson.ErrorCode == "0" || replyJson.ErrorCode == "160002" {
+						hasError = false
+						orm.NewOrm().QueryTable(models.TableName("forums")).
+							Filter("user_id", user.Id).
+							Filter("kw", kw).
+							Update(orm.Params{"reply_json": reply, "last_sign": time.Now().Day(), "sign_status": hasError})
+					}
+
+				}
+				taskOut <- "okay. end this task."
+			}
+		}()
+	}
+
+	go func() {
+		for _, user := range users {
+			taskIn <- *user
+		}
+	}()
+
+	for i := int64(0); i < totalTaskCount; i++ {
+		<-taskOut
+	}
+
+	return nil
+})
+
 var signForums = toolbox.NewTask("sign", "0 0 0 * * *", func() error {
 	// 每天 0:00 签到贴吧
 	users, total, err := models.GetAllUsers()
@@ -101,7 +158,7 @@ var signForums = toolbox.NewTask("sign", "0 0 0 * * *", func() error {
 				replyJson := ReplyJson{}
 				json.Unmarshal([]byte(reply), &replyJson)
 				hasError := true
-				if replyJson.ErrorCode == "0" || replyJson.ErrorCode == "160002"{
+				if replyJson.ErrorCode == "0" || replyJson.ErrorCode == "160002" {
 					hasError = false
 				}
 				orm.NewOrm().QueryTable(models.TableName("forums")).
