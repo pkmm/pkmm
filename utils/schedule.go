@@ -108,9 +108,9 @@ var reSignForums = toolbox.NewTask("re_sign", "0 30 */1 * * *", func() error {
 				for kw, reply := range *ret {
 					replyJson := ReplyJson{}
 					json.Unmarshal([]byte(reply), &replyJson)
-					hasError := true
+					hasError := 1
 					if replyJson.ErrorCode == "0" || replyJson.ErrorCode == "160002" {
-						hasError = false
+						hasError = 0
 						orm.NewOrm().QueryTable(models.TableName("forums")).
 							Filter("user_id", user.Id).
 							Filter("kw", kw).
@@ -157,9 +157,9 @@ var signForums = toolbox.NewTask("sign", "0 0 0 * * *", func() error {
 			for kw, reply := range *ret {
 				replyJson := ReplyJson{}
 				json.Unmarshal([]byte(reply), &replyJson)
-				hasError := true
+				hasError := 1
 				if replyJson.ErrorCode == "0" || replyJson.ErrorCode == "160002" {
-					hasError = false
+					hasError = 0
 				}
 				orm.NewOrm().QueryTable(models.TableName("forums")).
 					Filter("user_id", user.Id).
