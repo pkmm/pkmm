@@ -12,7 +12,7 @@ type Forum struct {
 	Kw         string
 	Fid        int
 	LastSign   int // 默认值-1 表示第一次添加， 以后同步的时候设置为0
-	SignStatus int // 默认值-1 1表示要签到的， 0 禁用
+	SignStatus int // 默认值0 1表示签到出现错误， 0签到成功
 	CreatedAt  int64
 	ReplyJson  string
 	IsDeleted  int

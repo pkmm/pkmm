@@ -27,13 +27,13 @@ type ChannelData struct {
 }
 
 type ReplyJson struct {
-	Ctime      string      `json:"ctime"`
+	Ctime      int64      `json:"ctime"`
 	ErrorCode  string      `json:"error_code"`
 	ErrorMsg   string      `json:"error_msg"`
 	Info       []string    `json:"info"`
-	Logid      string      `json:"logid"`
+	Logid      int64      `json:"logid"`
 	ServerTime string      `json:"server_time"`
-	Time       string      `json:"time"`
+	Time       int64      `json:"time"`
 	UserInfo   interface{} `json:"user_info"`
 }
 
