@@ -47,3 +47,15 @@ func InsertOrUpdateScore(score *Score) {
 	beego.Debug(score)
 	o.Insert(score)
 }
+
+func GetFailedLessons() (error, []orm.Params) {
+	var maps []orm.Params
+	o := orm.NewOrm()
+	num, err := o.Raw("SELECT kcmc, `type`, COUNT(*) AS cnt " +
+		"FROM score JOIN (SELECT id FROM score WHERE jd <=0) AS s2 ON s2.id = score.`id` " +
+		"GROUP BY score.`kcmc` ORDER BY cnt DESC limit 10").Values(&maps)
+	if err == nil && num > 0 {
+		return nil, maps
+	}
+	return err, maps
+}

@@ -20,6 +20,7 @@ func main() {
 	beego.Router("/zf", &controllers.ZfController{}, "*:GetScore")
 	beego.Router("/zf/check_account", &controllers.ZfController{}, "*:CheckAccount")
 	beego.Router("/zf/update_account", &controllers.ZfController{}, "post:UpdateAccount")
+	beego.Router("/zf/get_failed_lessons", &controllers.ZfController{}, "*:GetFailedLessons")
 
 	beego.SetLogger("file", `{"filename":"logs/pkmm.log","level":7,"daily":true,"maxdays":2}`)
 	beego.Run()

@@ -138,3 +138,12 @@ func (this *ZfController) UpdateAccount() {
 	}
 	this.jsonResult(out)
 }
+
+func (this *ZfController) GetFailedLessons() {
+	err, maps := models.GetFailedLessons()
+	if err == nil {
+		this.jsonResult(maps)
+	} else {
+		this.jsonResult([]string{"Has error"})
+	}
+}
