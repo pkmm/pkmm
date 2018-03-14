@@ -22,6 +22,11 @@ func main() {
 	beego.Router("/zf/update_account", &controllers.ZfController{}, "post:UpdateAccount")
 	beego.Router("/zf/get_failed_lessons", &controllers.ZfController{}, "*:GetFailedLessons")
 
+	// 设置日志
 	beego.SetLogger("file", `{"filename":"logs/pkmm.log","level":7,"daily":true,"maxdays":2}`)
+
+	// 设置静态资源文件, eg. /static/images/xx.png
+	beego.SetStaticPath("/static", "static")
+
 	beego.Run()
 }
