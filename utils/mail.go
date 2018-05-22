@@ -26,7 +26,6 @@ func init() {
 
 	config = fmt.Sprintf(`{"username":"%s","password":"%s","host":"%s","port":%d,"from":"%s"}`, username, password, host, port, from)
 	sendCh = make(chan *utils.Email, queueSize)
-
 	// 消费者，好好干活
 	go func() {
 		for {
