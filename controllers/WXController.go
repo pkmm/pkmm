@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"net/http"
-	"net/url"
-	"strings"
+	"fmt"
+	"github.com/astaxie/beego"
 	"io/ioutil"
+	"net/http"
 )
 
 type WXController struct {
@@ -14,15 +14,17 @@ type WXController struct {
 func (this *WXController) Login() {
 	code := this.Ctx.Input.Param("code")
 	client := &http.Client{}
-	params := make(url.Values)
-	params.Set("appid", "wx52fe76e5731453e0")
-	params.Set("secret", "9fb9be904c1edb5a17b620a0f97f7dba")
-	params.Set("js_code", code)
-	params.Set("grant_type", "authorization_code")
+	appId := beego.AppConfig.String("wx.appId")
+	secret := beego.AppConfig.String("wx.secret")
 	req, err := http.NewRequest(
 		"GET",
-		"https://api.weixin.qq.com/sns/jscode2session",
-		strings.NewReader(params.Encode()),
+		fmt.Sprintf(
+			"https://api.weixin.qq.com/sns/jscode2session?appId=%s&secret=%s&js_code=%s&grant_type=authorization_code",
+			appId,
+			secret,
+			code,
+		),
+		nil,
 	)
 
 	out := make(map[string]interface{})
