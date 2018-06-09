@@ -29,6 +29,7 @@ func init() {
 	// 消费者，好好干活
 	go func() {
 		for {
+			fmt.Println("wait email func")
 			select {
 			case m, ok := <-sendCh:
 				if !ok {
@@ -54,7 +55,7 @@ func SendMail(address, name, subject, content string, cc []string) bool {
 	select {
 	case sendCh <- mail:
 		return true
-	case <-time.After(time.Second * 3):
+	case <-time.After(time.Second * 3): // 队列满 超时3s 还是满则此次发送失败
 		return false
 	}
 

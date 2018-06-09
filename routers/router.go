@@ -29,4 +29,6 @@ func init() {
 		),
 	)
 	beego.AddNamespace(ns)
+
+	beego.AutoRouter(&controllers.WXController{})
 }

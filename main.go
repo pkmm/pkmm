@@ -7,6 +7,9 @@ import (
 	_ "pkmm/database/migrations"
 	"pkmm/models"
 	_ "pkmm/routers"
+	"fmt"
+	"time"
+	"pkmm/utils"
 )
 
 func main() {
@@ -27,6 +30,15 @@ func main() {
 
 	// 设置静态资源文件, eg. /static/images/xx.png
 	beego.SetStaticPath("/static", "static")
+
+	// 部署Email提醒
+	utils.SendMail(
+		"690581946@qq.com",
+		"Robotgg",
+		"部署HOOK",
+		fmt.Sprintf("pkmm代码重新部署_time[%s]", beego.Date(time.Now(), "Y-m-d H:i:s")),
+		[]string{},
+	)
 
 	beego.Run()
 }
