@@ -29,7 +29,6 @@ func init() {
 	// 消费者，好好干活
 	go func() {
 		for {
-			fmt.Println("wait email func")
 			select {
 			case m, ok := <-sendCh:
 				if !ok {

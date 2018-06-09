@@ -12,7 +12,7 @@ type WXController struct {
 }
 
 func (this *WXController) Login() {
-	code := this.Ctx.Input.Param("code")
+	code := this.GetString("code")
 	client := &http.Client{}
 	appId := beego.AppConfig.String("wx.appId")
 	secret := beego.AppConfig.String("wx.secret")
