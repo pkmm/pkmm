@@ -31,7 +31,9 @@ func Init() {
 	orm.RegisterModel(
 		new(Forum),
 		new(User),
-		new(Stu), new(Score))
+		new(Stu),
+		new(Score),
+	)
 
 	if beego.AppConfig.String("runmode") == "dev" {
 		orm.Debug = true
