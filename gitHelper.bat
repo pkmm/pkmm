@@ -1,4 +1,4 @@
 git pull 
 git add *
-git commit -m auto
+git commit -m "format code and fix error."
 git push
