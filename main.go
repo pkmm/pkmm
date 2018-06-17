@@ -7,9 +7,9 @@ import (
 	_ "pkmm/database/migrations"
 	"pkmm/models"
 	_ "pkmm/routers"
+	"pkmm/utils"
 	"fmt"
 	"time"
-	"pkmm/utils"
 )
 
 func main() {
@@ -32,13 +32,16 @@ func main() {
 	beego.SetStaticPath("/static", "static")
 
 	// 部署Email提醒
-	utils.SendMail(
-		"690581946@qq.com",
-		"Robotgg",
-		"部署HOOK",
-		fmt.Sprintf("pkmm代码重新部署_time[%s]", beego.Date(time.Now(), "Y-m-d H:i:s")),
-		[]string{},
-	)
+	runMode := beego.AppConfig.String("runmode")
+	if (runMode != "dev") {
+		utils.SendMail(
+			"690581946@qq.com",
+			"Robotgg",
+			"部署HOOK",
+			fmt.Sprintf("pkmm代码重新部署_time[%s]", beego.Date(time.Now(), "Y-m-d H:i:s")),
+			[]string{},
+		)
+	}
 
 	beego.Run()
 }

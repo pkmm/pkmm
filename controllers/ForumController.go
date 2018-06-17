@@ -22,11 +22,11 @@ type ReplyJson struct {
 }
 
 type ResponseJson struct {
-	Id        int
-	Kw        string
-	LastSign  int
-	CreatedAt int64
-	SignInfo  ReplyJson
+	Id        int `json:"id"`
+	Kw        string `json:"kw"`
+	LastSign  int `json:"last_sign"`
+	CreatedAt int64 `json:"created_at"`
+	SignInfo  ReplyJson `json:"sign_info"`
 }
 
 func prepareResponseData(forums []*models.Forum) *map[int]ResponseJson {
