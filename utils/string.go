@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"net"
 )
 
 func Md5(buf []byte) string {
@@ -54,4 +55,19 @@ func GetSourceCodePath() string {
 func GetExecPath() string {
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	return dir
+}
+
+func IpAddressOfLocal() string {
+	netInfos, err := net.InterfaceAddrs()
+	if err != nil {
+		return ""
+	}
+	for _, address := range netInfos {
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP.String()
+			}
+		}
+	}
+	return ""
 }

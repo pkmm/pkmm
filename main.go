@@ -38,7 +38,11 @@ func main() {
 			"690581946@qq.com",
 			"Robotgg",
 			"部署HOOK",
-			fmt.Sprintf("pkmm代码重新部署_time[%s]", beego.Date(time.Now(), "Y-m-d H:i:s")),
+			fmt.Sprintf(
+				"pkmm代码重新部署, Time: [%s], IP: [%s]",
+				beego.Date(time.Now(), "Y-m-d H:i:s"),
+				utils.IpAddressOfLocal(),
+			),
 			[]string{},
 		)
 	}
