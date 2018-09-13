@@ -38,7 +38,6 @@ func (this *ZfController) GetScore() {
 		preInsertScores := make([]models.Score, 0)
 		for _, score := range scores {
 			score.StuId = stu.Id
-			score.CreatedAt = time.Now()
 			preInsertScores = append(preInsertScores, score)
 		}
 		_, err := models.InsertScores(preInsertScores)

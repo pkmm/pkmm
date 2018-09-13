@@ -3,7 +3,6 @@ package models
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"time"
 )
 
 type Score struct {
@@ -15,7 +14,7 @@ type Score struct {
 	Bkcj      string
 	Xf        string
 	Jd        string
-	CreatedAt time.Time
+	CreatedAt string
 	StuId     int64
 	Xn        string
 	Xq        string

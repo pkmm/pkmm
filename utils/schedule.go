@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -9,7 +10,6 @@ import (
 	"pkmm/models"
 	"strconv"
 	"time"
-	"encoding/json"
 )
 
 // 初始化函数
@@ -27,13 +27,13 @@ type ChannelData struct {
 }
 
 type ReplyJson struct {
-	Ctime      int64      `json:"ctime"`
+	Ctime      int64       `json:"ctime"`
 	ErrorCode  string      `json:"error_code"`
 	ErrorMsg   string      `json:"error_msg"`
 	Info       []string    `json:"info"`
-	Logid      int64      `json:"logid"`
+	Logid      int64       `json:"logid"`
 	ServerTime string      `json:"server_time"`
-	Time       int64      `json:"time"`
+	Time       int64       `json:"time"`
 	UserInfo   interface{} `json:"user_info"`
 }
 
@@ -172,7 +172,7 @@ var signForums = toolbox.NewTask("sign", "0 0 0 * * *", func() error {
 	return nil
 })
 
-var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", func() error {
+var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", func() error {
 	// todo chunk result
 	o := orm.NewOrm()
 	var stus []*models.Stu
@@ -215,7 +215,6 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", fu
 				if len(scores) > 1 {
 					for _, score := range scores {
 						score.StuId = stu.Id
-						score.CreatedAt = time.Now()
 						models.InsertOrUpdateScore(&score)
 					}
 				}
