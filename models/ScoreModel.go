@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 )
 
@@ -43,7 +42,6 @@ func InsertOrUpdateScore(score *Score) {
 	if cnt != 0 {
 		return
 	}
-	beego.Debug(score)
 	o.Insert(score)
 }
 

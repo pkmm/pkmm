@@ -182,9 +182,8 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 		return err
 	}
 	if num == 0 {
-		beego.Debug("没有学生数据")
+		return nil
 	}
-	//beego.Debug(fmt.Sprintf("开始同步学生的成绩了， 一共有%d位同学需要同步", num))
 
 	totalCount := len(stus) // 总共的任务数量, 否则会直接把500M的内存直接跑满。现在基本上24%的内存
 	goroutine := 10         // 并发的数量
@@ -205,11 +204,10 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 				retry := 3
 				crawl := NewCrawl(stu.Num, stu.Pwd)
 				for try := 0; try < retry; try++ {
-					scores, err = crawl.Login()
-					if err != nil {
-						// todo
-					} else {
+					if scores, err = crawl.Login(); err == nil {
 						break
+					} else {
+						// todo handle error
 					}
 				}
 				if len(scores) > 1 {
@@ -234,7 +232,6 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 	}()
 
 	for i := 0; i < totalCount; i++ {
-		//beego.Debug(<-chResStu)
 		<-chResStu // ignore value.
 	}
 
