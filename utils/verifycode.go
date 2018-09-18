@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"github.com/ewalker544/libsvm-go"
 	"image"
@@ -13,8 +14,16 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"errors"
 )
+
+
+var (
+	model *libSvm.Model
+)
+func init() {
+	model = libSvm.NewModelFromFile(path.Join(getSourceCodePath(), "zf.model"))
+}
+
 
 func getSourceCodePath() string {
 	_, filename, _, _ := runtime.Caller(1)
@@ -80,7 +89,7 @@ func loadSamples(__path string) map[string][]float64 {
 		}
 		fp, _ := os.Open(subPath)
 		imOfGif, _ := gif.Decode(fp)
-		name := string([]byte(subPath)[strings.LastIndex(subPath, "\\")+1: strings.LastIndex(subPath, ".")])
+		name := string([]byte(subPath)[strings.LastIndex(subPath, "\\")+1 : strings.LastIndex(subPath, ".")])
 		subImgVector := crop(imOfGif, name)
 		for key, value := range subImgVector {
 			vector[key] = value
@@ -148,7 +157,6 @@ func Predict(r io.Reader, save bool) (string, error) {
 	//rep, _ := http.Get("http://zfxk.zjtcm.net/CheckCode.aspx")
 	//pix, _ := ioutil.ReadAll(rep.Body)
 	//defer rep.Body.Close()
-	model := libSvm.NewModelFromFile(path.Join(getSourceCodePath(), "zf.model"))
 	im, err := gif.Decode(r)
 	if err != nil {
 		return "", errors.New("解码验证码失败")

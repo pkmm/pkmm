@@ -198,7 +198,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 				stu := <-chReqStu
 				b := time.Now()
 
-				// 一下是任务的核心处理
+				// 以下是任务的核心处理
 				var scores []models.Score
 				// 登陆尝试
 				retry := 3
@@ -208,6 +208,11 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 						break
 					} else {
 						// todo handle error
+						sendMail,_ := beego.AppConfig.Bool("mail.send_failure_sync_score")
+						if sendMail {
+							content := "同步成绩，出现错误 " + err.Error() + ", " + stu.Num
+							SendMail("xiaoccla@qq.com", "PKMM", "Sync Job failed.", content, []string{})
+						}
 					}
 				}
 				if len(scores) > 1 {
