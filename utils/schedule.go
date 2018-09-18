@@ -209,11 +209,11 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 						break
 					} else {
 						// todo handle error
-						sendMail, _ := beego.AppConfig.Bool("mail.send_failure_sync_score")
-						if sendMail {
-							content := "同步成绩，出现错误 " + err.Error() + ", " + stu.Num
-							SendMail("zccxxx79@gmail.com", "PKMM", "Sync Job failed.", content, []string{})
-						}
+						//sendMail, _ := beego.AppConfig.Bool("mail.send_failure_sync_score")
+						//if sendMail {
+						//	content := "同步成绩，出现错误 " + err.Error() + ", " + stu.Num
+						//	SendMail("zccxxx79@gmail.com", "PKMM", "Sync Job failed.", content, []string{})
+						//}
 					}
 				}
 				if len(scores) > 1 {
@@ -224,7 +224,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 				}
 				e := time.Since(b)
 				// I写输出
-				chResStu <- fmt.Sprintf("[%s] has lessons: %02d, Cost time: %s.", stu.Num, len(scores), e.String())
+				chResStu <- fmt.Sprintf("[%s] has lessons: %02d, Cost time: %s, err: %s", stu.Num, len(scores), e.String(), err.Error())
 			}
 		}()
 	}
