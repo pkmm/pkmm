@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego"
@@ -236,9 +237,13 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 		}
 	}()
 
+	var br bytes.Buffer
+	var s string
 	for i := 0; i < totalCount; i++ {
-		<-chResStu // ignore value.
+		s = <- chResStu // ignore value.
+		br.WriteString(s)
 	}
+	SendMail("zccxxx79@gmail.com", "PKMM", "Sync Job Detail.", br.String(), []string{})
 
 	return nil
 })
