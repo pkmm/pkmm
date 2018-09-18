@@ -29,11 +29,11 @@ func main() {
 	runMode := beego.AppConfig.String("runmode")
 	if (runMode != "dev") {
 		utils.SendMail(
-			"690581946@qq.com",
-			"Robotgg",
-			"部署HOOK",
+			"zccxxx79@gmail.com",
+			"PKMM_服务端",
+			"部署HOOK通知",
 			fmt.Sprintf(
-				"pkmm代码重新部署, Time: [%s], IP: [%s]",
+				"pkmm代码已经重新部署, Time: [%s], IP: [%s]",
 				beego.Date(time.Now(), "Y-m-d H:i:s"),
 				utils.IpAddressOfLocal(),
 			),
