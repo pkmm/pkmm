@@ -248,7 +248,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 	sendMail, _ := beego.AppConfig.Bool("mail.send_failure_sync_score")
 
 	if sendMail {
-		SendMail("zccxxx79@gmail.com", "zccxxx79", "Sync Job Detail.", br.String(), []string{})
+		SendMail("xiaoccla@qq.com", "xiaoccla", "同步的数据详情", br.String(), []string{})
 	}
 	
 	return nil
