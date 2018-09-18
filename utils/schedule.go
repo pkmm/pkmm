@@ -224,7 +224,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 				}
 				e := time.Since(b)
 				// I写输出
-				chResStu <- fmt.Sprintf("[%s] has lessons: %02d, Cost time: %s, err: %s", stu.Num, len(scores), e.String(), err.Error())
+				chResStu <- fmt.Sprintf("[%s] has lessons: %02d, Cost time: %s", stu.Num, len(scores), e.String())
 			}
 		}()
 	}
