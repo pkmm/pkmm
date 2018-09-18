@@ -242,7 +242,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 	for i := 0; i < totalCount; i++ {
 		s = <-chResStu // ignore value.
 		br.WriteString(s)
-		br.WriteString("<br/>\n")
+		br.WriteString("<br>")
 	}
 
 	sendMail, _ := beego.AppConfig.Bool("mail.send_failure_sync_score")
