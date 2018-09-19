@@ -239,6 +239,9 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 
 	var br bytes.Buffer
 	var s string
+	br.WriteString("来自主机： ")
+	br.WriteString(IpAddressOfLocal())
+	br.WriteString("<br>==============<br>")
 	for i := 0; i < totalCount; i++ {
 		s = <-chResStu // ignore value.
 		br.WriteString(s)
