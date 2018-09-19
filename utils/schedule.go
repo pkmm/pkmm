@@ -246,12 +246,16 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 		s = <-chResStu
 		br.WriteString(fmt.Sprintf("%s,课程数： %02d, 用时: %s", s.StuNo, s.LessonCnt, s.CostTime))
 		br.WriteString("<br>")
-		o.QueryTable("sync_detail").Filter("stu_no", s.StuNo).Update(orm.Params{
-			"stu_no":     s.StuNo,
-			"lesson_cnt": s.LessonCnt,
-			"cost_time":  s.CostTime,
-			"updated_at": time.Now().Unix(),
-		})
+		if o.QueryTable("sync_detail").Filter("stu_no", s.StuNo).Exist() {
+			o.Raw("UPDATE sync_detail set lesson_cnt=?, cost_time=?, updated_at=? where stu_no=?",
+				s.LessonCnt,
+				s.CostTime,
+				time.Now(),
+				s.StuNo,
+			).Exec()
+		} else {
+			o.Raw("INSERT INTO sync_detail(stu_no, lesson_cnt, cost_time, updated_at) values(?, ?, ?, ?)", s.StuNo, s.LessonCnt, s.CostTime, time.Now()).Exec()
+		}
 	}
 
 	sendMail, _ := beego.AppConfig.Bool("mail.send_failure_sync_score")

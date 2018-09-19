@@ -33,6 +33,7 @@ func Init() {
 		new(User),
 		new(Stu),
 		new(Score),
+		new(SyncDetail),
 	)
 
 	if beego.AppConfig.String("runmode") == "dev" {
