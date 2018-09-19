@@ -188,7 +188,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 
 	totalCount := len(stus) // 总共的任务数量, 否则会直接把500M的内存直接跑满。现在基本上24%的内存
 	goroutine := 10         // 并发的数量
-	chResStu := make(chan string, goroutine)
+	chResStu := make(chan models.SyncDetail, goroutine)
 	chReqStu := make(chan models.Stu, totalCount)
 
 	// worker 10个worker 等待工作的到来
@@ -224,7 +224,7 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 				}
 				e := time.Since(b)
 				// I写输出
-				chResStu <- fmt.Sprintf("[%s] has lessons: %02d, Cost time: %s", stu.Num, len(scores), e.String())
+				chResStu <- models.SyncDetail{StuNo: stu.Num, LessonCnt: len(scores), CostTime: e.String()}
 			}
 		}()
 	}
@@ -238,14 +238,20 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 	}()
 
 	var br bytes.Buffer
-	var s string
+	var s models.SyncDetail
 	br.WriteString("来自主机： ")
 	br.WriteString(IpAddressOfLocal())
 	br.WriteString("<br>==============<br>")
 	for i := 0; i < totalCount; i++ {
-		s = <-chResStu // ignore value.
-		br.WriteString(s)
+		s = <-chResStu
+		br.WriteString(fmt.Sprintf("%s,课程数： %02d, 用时: %s", s.StuNo, s.LessonCnt, s.CostTime))
 		br.WriteString("<br>")
+		o.QueryTable("sync_detail").Filter("stu_no", s.StuNo).Update(orm.Params{
+			"stu_no":     s.StuNo,
+			"lesson_cnt": s.LessonCnt,
+			"cost_time":  s.CostTime,
+			"updated_at": time.Now().Unix(),
+		})
 	}
 
 	sendMail, _ := beego.AppConfig.Bool("mail.send_failure_sync_score")
@@ -253,6 +259,6 @@ var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", fu
 	if sendMail {
 		SendMail("xiaoccla@qq.com", "xiaoccla", "同步的数据详情", br.String(), []string{})
 	}
-	
+
 	return nil
 })
