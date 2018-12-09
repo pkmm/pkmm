@@ -54,7 +54,7 @@ func main() {
 			"desp": {desp},
 		}
 		client.PostForm(
-			"https://sc.ftqq.com/SCU37342T301edeeefbdc09a20b7476e379f84a065c0cb87c9592c.send",
+			"https://sc.ftqq.com/"+beego.AppConfig.String("sckey")+".send",
 			data,
 		)
 	}
