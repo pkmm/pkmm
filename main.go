@@ -45,7 +45,7 @@ func main() {
 		// 使用server酱推送
 		client := &http.Client{}
 		desp := fmt.Sprintf(
-			"pkmm代码已经重新部署, Time: [%s], IP: [%s]",
+			"### Pkmm代码已经重新部署  \n #### Time: %s  \n ##### IP: %s",
 			beego.Date(time.Now(), "Y-m-d H:i:s"),
 			utils.IpAddressOfLocal(),
 		)
