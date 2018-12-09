@@ -25,3 +25,6 @@ mail.password =
 
 # 发生同步成绩失败的email
 mail.send_failure_sync_score = true
+
+# server 酱sckey
+sckey = 
