@@ -16,15 +16,6 @@ import (
 	"strings"
 )
 
-
-var (
-	model *libSvm.Model
-)
-func init() {
-	model = libSvm.NewModelFromFile(path.Join(getSourceCodePath(), "zf.model"))
-}
-
-
 func getSourceCodePath() string {
 	_, filename, _, _ := runtime.Caller(1)
 	return path.Dir(filename)
@@ -157,6 +148,8 @@ func Predict(r io.Reader, save bool) (string, error) {
 	//rep, _ := http.Get("http://zfxk.zjtcm.net/CheckCode.aspx")
 	//pix, _ := ioutil.ReadAll(rep.Body)
 	//defer rep.Body.Close()
+	wd, _ := os.Getwd()
+	model := libSvm.NewModelFromFile(path.Join(wd, "/utils/zf.model"))
 	im, err := gif.Decode(r)
 	if err != nil {
 		return "", errors.New("解码验证码失败")

@@ -113,7 +113,7 @@ func (this *ZfController) CheckAccount() {
 	num := this.GetString("num")
 	pwd := this.GetString("pwd")
 	ok, reason := utils.ValidAccount(num, pwd)
-	mp := make(map[string]interface{}, 0)
+	mp := make(map[string]interface{})
 	if ok {
 		mp["msg_status"] = MSG_OK
 	} else {

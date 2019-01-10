@@ -19,6 +19,7 @@ func init() {
 	toolbox.AddTask("sign", signForums)
 	toolbox.AddTask("sync_score_from_zcmu", syncScoreFromZcmu)
 	toolbox.AddTask("re_sign", reSignForums)
+	//toolbox.AddTask("test", test)
 }
 
 // goroutine 通信数据机构
@@ -37,6 +38,12 @@ type ReplyJson struct {
 	Time       int64       `json:"time"`
 	UserInfo   interface{} `json:"user_info"`
 }
+
+
+//var test = toolbox.NewTask("test", "0 */2 * * * *", func() error {
+//	fmt.Println("test", time.Now().Format("2006-01-02 15:04:05"))
+//	return nil
+//})
 
 var syncUsersForumsFromOfficial = toolbox.NewTask("syncUsersForumsFromOfficial", "0 0 23 * * *", func() error {
 	// 每天11:00 PM 更新贴吧
@@ -173,7 +180,7 @@ var signForums = toolbox.NewTask("sign", "0 0 0 * * *", func() error {
 	return nil
 })
 
-var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */30 * * * *", func() error {
+var syncScoreFromZcmu = toolbox.NewTask("sync_zcmu_grades", "0 */10 * * * *", func() error {
 	// todo chunk result
 	o := orm.NewOrm()
 	var stus []*models.Stu
