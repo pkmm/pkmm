@@ -17,7 +17,7 @@ import (
 func init() {
 	toolbox.AddTask("syncUsersForumsFromOfficial", syncUsersForumsFromOfficial)
 	toolbox.AddTask("sign", signForums)
-	toolbox.AddTask("sync_score_from_zcmu", syncScoreFromZcmu)
+	//toolbox.AddTask("sync_score_from_zcmu", syncScoreFromZcmu)
 	toolbox.AddTask("re_sign", reSignForums)
 	//toolbox.AddTask("test", test)
 }
